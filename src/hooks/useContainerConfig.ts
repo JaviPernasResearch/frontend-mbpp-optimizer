@@ -5,6 +5,7 @@ export function useContainerConfig() {
   const [isContainerConfigOpen, setContainerConfigOpen] = useState(false);
   const [isOptimizationSettingsOpen, setOptimizationSettingsOpen] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [stlData, setStlData] = useState<ArrayBuffer | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -55,6 +56,8 @@ export function useContainerConfig() {
             }
             
             setFileName(file.name);
+            setStlData(result);
+
             toast.success('STL file uploaded successfully!');
           }
         } catch (error) {
@@ -88,6 +91,7 @@ export function useContainerConfig() {
   
   const removeFile = () => {
     setFileName(null);
+    setStlData(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -97,6 +101,7 @@ export function useContainerConfig() {
     isContainerConfigOpen,
     isOptimizationSettingsOpen,
     fileName,
+    stlData,
     isLoading,
     fileInputRef,
     toggleContainerConfig,
