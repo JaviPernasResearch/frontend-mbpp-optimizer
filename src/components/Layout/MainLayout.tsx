@@ -1,21 +1,41 @@
-import React, { ReactNode } from 'react';
+'use client';
+
+import React, { ReactNode, useState } from 'react';
 import Sidebar from './Sidebar';
+import LegendPanel from '../UI/LegendPanel';
 import BoardsContainer from '../ThreeD/BoardsContainer';
 
 type MainLayoutProps = {
-  children?: ReactNode; // Make children optional with the ? symbol
+  children?: ReactNode;
 };
 
 function MainLayout({ children }: MainLayoutProps) {
+  const [isLegendOpen, setIsLegendOpen] = useState(false);
+
+  const toggleLegend = () => {
+    setIsLegendOpen(!isLegendOpen);
+  };
+  
   return (
-    <div className="flex">
-      <Sidebar />
-      <main className="flex-1 p-4">
+    <div className="flex flex-row h-screen w-full">
+      {/* Left side - Sidebar */}
+      <div className="w-100 h-full bg-white shadow-lg flex-shrink-0">
+        <Sidebar />
+      </div>
+      
+      {/* Vertical separator */}
+      <div className="w-1 h-full bg-blue-500"></div>
+      
+      {/* Right side - 3D View with overlay Legend */}
+      <div className="flex-1 h-full bg-gray-100 relative">
         <BoardsContainer />
         {children}
-      </main>
+        
+        {/* Legend Panel - Positioned absolutely over the 3D view */}
+        <LegendPanel isOpen={isLegendOpen} onToggle={toggleLegend} />
+      </div>
     </div>
   );
-};
+}
 
 export default MainLayout;
