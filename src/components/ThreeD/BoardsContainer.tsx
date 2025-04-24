@@ -4,7 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
 import { OrbitControls } from '@react-three/drei';
 import { Box } from '@react-three/drei';
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+import {STLLoader} from 'three/addons/loaders/STLLoader.js';
 import { useContainerConfig } from '../../hooks/useContainerConfig';
 import * as THREE from 'three';
 
