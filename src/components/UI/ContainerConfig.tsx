@@ -6,6 +6,8 @@ const ContainerConfig = () => {
     fileName,
     isLoading,
     fileInputRef,
+    containerCount,
+    setContainerCount,
     handleFileChange,
     triggerFileInput,
     removeFile,
@@ -78,17 +80,23 @@ const ContainerConfig = () => {
         </div>
       </div>
 
-      {/* Container Dimensions */}
+      {/* Container Count */}
       <div className="space-y-3">
-        <h3 className="font-medium text-sm mb-2">Container Dimensions</h3>
+        <h3 className="font-medium text-sm mb-2">Container Settings</h3>
         <div className="flex items-center space-x-2">
-          <label htmlFor="containerWidth" className="w-16">Width:</label>
-          <input type="number" id="containerWidth" className="border rounded p-1 w-full" />
+          <label htmlFor="containerCount" className="w-40">Number of Containers:</label>
+          <input 
+            type="number" 
+            id="containerCount" 
+            value={containerCount}
+            onChange={(e) => setContainerCount(Math.max(1, parseInt(e.target.value) || 1))}
+            min="1"
+            className="border rounded p-1 w-full" 
+          />
         </div>
-        <div className="flex items-center space-x-2">
-          <label htmlFor="containerHeight" className="w-16">Height:</label>
-          <input type="number" id="containerHeight" className="border rounded p-1 w-full" />
-        </div>
+        <p className="text-xs text-gray-500 mt-1">
+          Specify how many containers are available for optimization.
+        </p>
       </div>
     </div>
   );

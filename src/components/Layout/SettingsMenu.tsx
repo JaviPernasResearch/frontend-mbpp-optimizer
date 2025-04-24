@@ -10,7 +10,7 @@ import OptimizationButton from '../UI/OptimizationButton';
 import { useContainerConfig } from '../../hooks/useContainerConfig';
 import { useOptimizationSettings } from '@/hooks/useOptimizationSettings';
 
-const Sidebar = () => {
+const SettingsMenu = () => {
   const { 
     isContainerConfigOpen, 
     isOptimizationSettingsOpen, 
@@ -81,4 +81,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default SettingsMenu;

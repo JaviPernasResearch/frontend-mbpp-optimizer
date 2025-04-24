@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode, useState } from 'react';
-import Sidebar from './Sidebar';
+import SettingsMenu from './SettingsMenu';
 import LegendPanel from '../UI/LegendPanel';
 import ThreeDView from './ThreeDView';
 
@@ -20,7 +20,7 @@ function MainLayout({ children }: MainLayoutProps) {
     <div className="flex flex-row h-screen w-full">
       {/* Left side - Sidebar */}
       <div className="w-100 h-full bg-white shadow-lg flex-shrink-0">
-        <Sidebar />
+        <SettingsMenu />
       </div>
       
       {/* Vertical separator */}

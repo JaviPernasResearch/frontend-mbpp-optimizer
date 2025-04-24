@@ -2,18 +2,21 @@ import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 export function useContainerConfig() {
-  const [isContainerConfigOpen, setContainerConfigOpen] = useState(false);
+  const [isContainerConfigOpen, setContainerConfigOpen] = useState(true);
   const [isOptimizationSettingsOpen, setOptimizationSettingsOpen] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [stlData, setStlData] = useState<ArrayBuffer | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [containerCount, setContainerCount] = useState<number>(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const toggleContainerConfig = () => {
+    setOptimizationSettingsOpen(false); // Close optimization settings when opening container config
     setContainerConfigOpen(!isContainerConfigOpen);
   };
 
   const toggleOptimizationSettings = () => {
+    setContainerConfigOpen(false); // Close container config when opening optimization settings
     setOptimizationSettingsOpen(!isOptimizationSettingsOpen);
   };
 
@@ -32,7 +35,7 @@ export function useContainerConfig() {
   
       setIsLoading(true);
       
-      // Read file header to validate it's actually an STL file
+      // Read file to validate and store it
       const reader = new FileReader();
       
       reader.onload = (event) => {
@@ -40,24 +43,10 @@ export function useContainerConfig() {
           const result = event.target?.result;
           
           if (result instanceof ArrayBuffer) {
-            // Check for ASCII STL (starts with "solid")
-            const header = new TextDecoder().decode(result.slice(0, 5));
-            const isBinary = !header.startsWith('solid');
-            
-            if (isBinary) {
-              // Binary STL validation (check file size matches header)
-              const view = new DataView(result);
-              const triangleCount = view.getUint32(80, true);
-              const expectedSize = 84 + (triangleCount * 50); // Header + triangles
-              
-              if (Math.abs(file.size - expectedSize) > 100) { // Allow small margin of error
-                throw new Error('Invalid binary STL file structure');
-              }
-            }
+            // Additional validation if needed
             
             setFileName(file.name);
             setStlData(result);
-
             toast.success('STL file uploaded successfully!');
           }
         } catch (error) {
@@ -78,7 +67,6 @@ export function useContainerConfig() {
         }
       };
       
-      // Read the first chunk to check the header
       reader.readAsArrayBuffer(file);
     }
   };
@@ -103,6 +91,8 @@ export function useContainerConfig() {
     fileName,
     stlData,
     isLoading,
+    containerCount,
+    setContainerCount,
     fileInputRef,
     toggleContainerConfig,
     toggleOptimizationSettings,
