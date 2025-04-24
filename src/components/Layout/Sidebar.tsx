@@ -7,22 +7,38 @@ import FoldablePanel from '../UI/FoldablePanel';
 import ContainerConfig from '../UI/ContainerConfig';
 import OptimizationSettings from '../UI/OptimizationSettings';
 import OptimizationButton from '../UI/OptimizationButton';
-import { useSidebar } from '../../hooks/useSidebar';
+import { useContainerConfig } from '../../hooks/useContainerConfig';
+import { useOptimizationSettings } from '@/hooks/useOptimizationSettings';
 
 const Sidebar = () => {
   const { 
     isContainerConfigOpen, 
     isOptimizationSettingsOpen, 
     toggleContainerConfig, 
-    toggleOptimizationSettings 
-  } = useSidebar();
+    toggleOptimizationSettings,
+    stlData // Get the STL data to check if loaded
+  } = useContainerConfig();
+  
+  // Access optimization settings from a context or state
+  const { settings } = useOptimizationSettings();
+  
+  // Check if settings are properly configured
+  const areSettingsConfigured = Boolean(
+    // At least one optimization goal must be selected
+    (settings?.groupSameOrderComponents || 
+     settings?.groupSameMaterialComponents || 
+     settings?.minimizeSpaceWaste)
+  );
+  
+  // Button is enabled only when STL is loaded AND settings are configured
+  const isOptimizationEnabled = Boolean(stlData) && areSettingsConfigured;
 
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
         <h2 className="text-3xl font-bold text-gray-800">Settings Panel</h2>
-        <p className="text-2sm text-gray-600 mt-1">Optimization Parameters</p>
+        <p className="text-sm text-gray-600 mt-1">Optimization Parameters</p>
       </div>
       
       {/* Settings sub-panels */}
@@ -45,9 +61,20 @@ const Sidebar = () => {
       </div>
       
       <div className="p-4 border-t border-gray-200 bg-gray-50">
-        <OptimizationButton onOptimize={() => toast('Optimization started!')} />
+        <OptimizationButton 
+          onOptimize={() => {
+            if (isOptimizationEnabled) {
+              toast.success('Optimization started!');
+            } else {
+              toast.warning('Please configure settings and load an STL file first');
+            }
+          }} 
+          isEnabled={isOptimizationEnabled}
+        />
         <p className="text-xs text-center text-gray-500 mt-2">
-          Configure settings above before optimizing
+          {!stlData && "Upload a container model first"}
+          {stlData && !areSettingsConfigured && "Select at least one optimization goal"}
+          {isOptimizationEnabled && "Ready to optimize"}
         </p>
       </div>
     </div>

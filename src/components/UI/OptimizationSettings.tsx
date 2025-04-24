@@ -1,19 +1,10 @@
-import React, { useState } from 'react';
-
-interface OptimizationSettingsState {
-  optimizationApproach: 'constraint-programming' | 'reinforcement-learning';
-  groupSameOrderComponents: boolean;
-  groupSameMaterialComponents: boolean;
-  minimizeSpaceWaste: boolean;
-}
+import React from 'react';
+import { useOptimizationSettings } from '../../hooks/useOptimizationSettings';
+import { OptimizationSettingsState } from '@/types/optimization';
 
 const OptimizationSettings: React.FC = () => {
-  const [settings, setSettings] = useState<OptimizationSettingsState>({
-    optimizationApproach: 'constraint-programming',
-    groupSameOrderComponents: false,
-    groupSameMaterialComponents: false,
-    minimizeSpaceWaste: true,
-  });
+
+  const { settings, setSettings } = useOptimizationSettings();
 
   // Handle approach change
   const handleApproachChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -68,7 +59,7 @@ const OptimizationSettings: React.FC = () => {
             className="h-4 w-4 text-blue-600 border-gray-300 rounded"
           />
           <label htmlFor="minimizeWaste" className="ml-2 block text-sm text-gray-700">
-            Minimize material waste
+            Minimize space waste
           </label>
         </div>
       </div>
