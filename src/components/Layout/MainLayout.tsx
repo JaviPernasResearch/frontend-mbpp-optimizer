@@ -3,7 +3,7 @@
 import React, { ReactNode, useState } from 'react';
 import Sidebar from './Sidebar';
 import LegendPanel from '../UI/LegendPanel';
-import BoardsContainer from '../ThreeD/BoardsContainer';
+import ThreeDView from './ThreeDView';
 
 type MainLayoutProps = {
   children?: ReactNode;
@@ -28,7 +28,7 @@ function MainLayout({ children }: MainLayoutProps) {
       
       {/* Right side - 3D View with overlay Legend */}
       <div className="flex-1 h-full bg-gray-100 relative">
-        <BoardsContainer />
+        <ThreeDView />
         {children}
         
         {/* Legend Panel - Positioned absolutely over the 3D view */}

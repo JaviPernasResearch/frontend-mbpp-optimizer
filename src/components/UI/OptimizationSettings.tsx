@@ -1,71 +1,94 @@
 import React, { useState } from 'react';
-import FoldablePanel from './FoldablePanel';
 
 interface OptimizationSettingsState {
-  optimizationLevel: 'low' | 'medium' | 'high';
-  enableFeatureX: boolean;
-  enableFeatureY: boolean;
+  optimizationApproach: 'constraint-programming' | 'reinforcement-learning';
+  groupSameOrderComponents: boolean;
+  groupSameMaterialComponents: boolean;
+  minimizeSpaceWaste: boolean;
 }
 
 const OptimizationSettings: React.FC = () => {
   const [settings, setSettings] = useState<OptimizationSettingsState>({
-    optimizationLevel: 'medium',
-    enableFeatureX: false,
-    enableFeatureY: false,
+    optimizationApproach: 'constraint-programming',
+    groupSameOrderComponents: false,
+    groupSameMaterialComponents: false,
+    minimizeSpaceWaste: true,
   });
 
-  // Properly type the event parameter
-  const handleOptimizationLevelChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  // Handle approach change
+  const handleApproachChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSettings({ 
       ...settings, 
-      optimizationLevel: event.target.value as 'low' | 'medium' | 'high' 
+      optimizationApproach: event.target.value as 'constraint-programming' | 'reinforcement-learning'
     });
   };
 
-  // Type the feature parameter
-  const handleFeatureToggle = (feature: keyof Pick<OptimizationSettingsState, 'enableFeatureX' | 'enableFeatureY'>) => {
-    setSettings({ ...settings, [feature]: !settings[feature] });
+  // Handle goal toggle
+  const handleGoalToggle = (goal: keyof Omit<OptimizationSettingsState, 'optimizationApproach'>) => {
+    setSettings({ ...settings, [goal]: !settings[goal] });
   };
 
   return (
-    <div className="space-y-3">
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Optimization Level</label>
+    <div className="space-y-4">
+      <div className="space-y-3 mb-4">
+        <h3 className="font-medium text-sm mb-2">Optimization Goals</h3>
+        
+        <div className="flex items-center">
+          <input
+            id="groupOrders"
+            type="checkbox"
+            checked={settings.groupSameOrderComponents}
+            onChange={() => handleGoalToggle('groupSameOrderComponents')}
+            className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+          />
+          <label htmlFor="groupOrders" className="ml-2 block text-sm text-gray-700">
+            Group components from the same order
+          </label>
+        </div>
+        
+        <div className="flex items-center">
+          <input
+            id="groupMaterials"
+            type="checkbox"
+            checked={settings.groupSameMaterialComponents}
+            onChange={() => handleGoalToggle('groupSameMaterialComponents')}
+            className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+          />
+          <label htmlFor="groupMaterials" className="ml-2 block text-sm text-gray-700">
+            Group components of the same material
+          </label>
+        </div>
+        
+        <div className="flex items-center">
+          <input
+            id="minimizeWaste"
+            type="checkbox"
+            checked={settings.minimizeSpaceWaste}
+            onChange={() => handleGoalToggle('minimizeSpaceWaste')}
+            className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+          />
+          <label htmlFor="minimizeWaste" className="ml-2 block text-sm text-gray-700">
+            Minimize material waste
+          </label>
+        </div>
+      </div>
+      
+      <div className="pt-3 border-t border-gray-200">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Solver Approach</label>
         <select
-          value={settings.optimizationLevel}
-          onChange={handleOptimizationLevelChange}
+          value={settings.optimizationApproach}
+          onChange={handleApproachChange}
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
         >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
+          <option value="constraint-programming">Constraint Programming</option>
+          <option value="reinforcement-learning">Reinforcement Learning</option>
         </select>
-      </div>
-      
-      <div className="flex items-center">
-        <input
-          id="featureX"
-          type="checkbox"
-          checked={settings.enableFeatureX}
-          onChange={() => handleFeatureToggle('enableFeatureX')}
-          className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-        />
-        <label htmlFor="featureX" className="ml-2 block text-sm text-gray-700">
-          Enable Feature X
-        </label>
-      </div>
-      
-      <div className="flex items-center">
-        <input
-          id="featureY"
-          type="checkbox"
-          checked={settings.enableFeatureY}
-          onChange={() => handleFeatureToggle('enableFeatureY')}
-          className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-        />
-        <label htmlFor="featureY" className="ml-2 block text-sm text-gray-700">
-          Enable Feature Y
-        </label>
+        <p className="mt-1 text-xs text-gray-500">
+          {settings.optimizationApproach === 'constraint-programming' 
+            ? 'Uses mathematical constraints to find optimal solutions. More predictable but may be slower for complex problems.'
+            : 'Uses AI to learn optimal packing strategies. May find novel solutions but training can take longer.'
+          }
+        </p>
       </div>
     </div>
   );

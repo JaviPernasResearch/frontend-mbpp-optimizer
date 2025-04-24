@@ -32,7 +32,7 @@ const StlModel = ({ stlData, wireframe }: { stlData: ArrayBuffer | null, wirefra
   );
 };
 
-const BoardsContainer = () => {
+const ThreeDView = () => {
   const { stlData } = useContainerConfig();
   const [wireframe, setWireframe] = useState(false);
   
@@ -76,4 +76,4 @@ const BoardsContainer = () => {
   );
 };
 
-export default BoardsContainer;
+export default ThreeDView;
