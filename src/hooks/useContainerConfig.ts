@@ -1,15 +1,27 @@
-import { useState, useRef } from 'react';
+import { stlDataState } from '@/states/stlDataState';
+import { useAtom } from 'jotai';
+import { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
 export function useContainerConfig() {
   const [isContainerConfigOpen, setContainerConfigOpen] = useState(true);
   const [isOptimizationSettingsOpen, setOptimizationSettingsOpen] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [stlData, setStlData] = useState<ArrayBuffer | null>(null);
+  const [stlData, setStlData] = useAtom(stlDataState); 
   const [isLoading, setIsLoading] = useState(false);
   const [containerCount, setContainerCount] = useState<number>(1);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);  //The Document Object Model (DOM) is the data representation of the objects that comprise the structure and content of a document on the web
 
+  // This effect ensures fileName is always in sync with stlData
+  // So when the panel reopens, it will display correctly
+  useEffect(() => {
+    if (stlData && !fileName) {
+      setFileName("STL Model"); // Default name if we have data but no filename
+    } else if (!stlData && fileName) {
+      setFileName(null); // Clear filename if no data
+    }
+  }, [stlData, fileName]);
+  
   const toggleContainerConfig = () => {
     setOptimizationSettingsOpen(false); // Close optimization settings when opening container config
     setContainerConfigOpen(!isContainerConfigOpen);
