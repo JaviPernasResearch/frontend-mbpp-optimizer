@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Text, Grid, Html } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
-import { IMOSBin, IMOSModule as ModuleType, PackedPart} from '../../types/BinTypes';
+import { Bin, Module as ModuleType, PackedPart} from '../../types/BinTypes';
 import * as THREE from 'three';
 
 interface OptimizedContainerProps {
@@ -73,26 +73,26 @@ const Module: React.FC<{
 }> = ({ module, position, showSlots }) => {
   return (
     <group position={position}>
-      {showSlots && module.Slots.$values.map((slot) => {
+      {showSlots && module.slots.map((slot) => {
         // IMOS: X = width, Y = height, Z = depth
         // Three.js: X = width, Y = height, Z = depth (standard)
-        const slotWidth = Math.abs(slot.Size.X);
-        const slotHeight = Math.abs(slot.Size.Y);
-        const slotDepth = Math.abs(slot.Size.Z);
+        const slotWidth = Math.abs(slot.size.X);
+        const slotHeight = Math.abs(slot.size.Y);
+        const slotDepth = Math.abs(slot.size.Z);
 
         // Position the center of the slot properly
-        const slotX = slot.Origin.X + slotWidth/2;
-        const slotY = slot.Origin.Y + slotHeight/2;
-        const slotZ = slot.Origin.Z + slotDepth/2;
+        const slotX = slot.origin.X + slotWidth/2;
+        const slotY = slot.origin.Y + slotHeight/2;
+        const slotZ = slot.origin.Z + slotDepth/2;
         
         return (
           <Slot 
-            key={slot.Guid}
+            key={slot.guid}
             width={slotWidth}
             height={slotHeight}
             depth={slotDepth}
             position={[slotX, slotY, slotZ]}
-            index={slot.GlobalIndex}
+            index={slot.global_index}
           />
         );
       })}
@@ -131,7 +131,7 @@ const ContainerSign: React.FC<{
 };
 
 const IMOSContainer: React.FC<{
-  bin: IMOSBin,
+  bin: Bin,
   position: [number, number, number],
   parts: PackedPart[],
   colorBy: 'material' | 'assembly',
@@ -142,11 +142,11 @@ const IMOSContainer: React.FC<{
   const getContainerDimensions = () => {
     let maxX = 0, maxY = 0, maxZ = 0;
     
-    bin.Modules.$values.forEach(module => {
-      module.Slots.$values.forEach(slot => {
-        const endX = slot.Origin.X + Math.abs(slot.Size.X);
-        const endY = slot.Origin.Y + Math.abs(slot.Size.Y);
-        const endZ = slot.Origin.Z + Math.abs(slot.Size.Z);
+    bin.modules.forEach(module => {
+      module.slots.forEach(slot => {
+        const endX = slot.origin.X + Math.abs(slot.size.X);
+        const endY = slot.origin.Y + Math.abs(slot.size.Y);
+        const endZ = slot.origin.Z + Math.abs(slot.size.Z);
         
         maxX = Math.max(maxX, endX);
         maxY = Math.max(maxY, endY);
@@ -168,11 +168,11 @@ const IMOSContainer: React.FC<{
       />
       
       {/* Render modules */}
-      {bin.Modules.$values.map((module) => (
+      {bin.modules.map((module) => (
         <Module 
-          key={module.Guid}
+          key={module.guid}
           module={module} 
-          position={[module.Origin.X, module.Origin.Y, module.Origin.Z]}
+          position={[module.origin.X, module.origin.Y, module.origin.Z]}
           showSlots={showSlots}
         />
       ))}
@@ -182,26 +182,26 @@ const IMOSContainer: React.FC<{
         // Find the appropriate module and slot
         const moduleIndex = Math.min(
           Math.floor(part.slot_id / 100),
-          bin.Modules.$values.length - 1
+          bin.modules.length - 1
         );
         
-        const module = bin.Modules.$values[moduleIndex];
+        const module = bin.modules[moduleIndex];
         const slotIndex = Math.min(
           part.slot_id % 100,
-          module.Slots.$values.length - 1
+          module.slots.length - 1
         );
         
-        const slot = module.Slots.$values[slotIndex];
+        const slot = module.slots[slotIndex];
         
         // Part dimensions based on slot size with some margin
-        const partWidth = Math.abs(slot.Size.X) * 0.95;
-        const partHeight = Math.abs(slot.Size.Y) * 0.95;
-        const partDepth = Math.abs(slot.Size.Z) * 0.95;
+        const partWidth = Math.abs(slot.size.X) * 0.95;
+        const partHeight = Math.abs(slot.size.Y) * 0.95;
+        const partDepth = Math.abs(slot.size.Z) * 0.95;
         
         // Calculate position (center of slot)
-        const partX = module.Origin.X + slot.Origin.X + partWidth/2;
-        const partY = module.Origin.Y + slot.Origin.Y + partHeight/2;
-        const partZ = module.Origin.Z + slot.Origin.Z + partDepth/2;
+        const partX = module.origin.X + slot.origin.X + partWidth/2;
+        const partY = module.origin.Y + slot.origin.Y + partHeight/2;
+        const partZ = module.origin.Z + slot.origin.Z + partDepth/2;
         
         const isRotated = part.alignment === 1;
         const rotation: [number, number, number] = isRotated ? [0, Math.PI / 2, 0] : [0, 0, 0];
@@ -250,11 +250,11 @@ const OptimizedContainer: React.FC<OptimizedContainerProps> = ({
   const getContainerDimensions = () => {
     let maxX = 0, maxY = 0, maxZ = 0;
     
-    binData.Modules.$values.forEach(module => {
-      module.Slots.$values.forEach(slot => {
-        const endX = slot.Origin.X + Math.abs(slot.Size.X);
-        const endY = slot.Origin.Y + Math.abs(slot.Size.Y);
-        const endZ = Math.abs(slot.Size.Z);
+    binData.modules.forEach(module => {
+      module.slots.forEach(slot => {
+        const endX = slot.origin.X + Math.abs(slot.size.X);
+        const endY = slot.origin.Y + Math.abs(slot.size.Y);
+        const endZ = Math.abs(slot.size.Z);
         
         maxX = Math.max(maxX, endX);
         maxY = Math.max(maxY, endY);

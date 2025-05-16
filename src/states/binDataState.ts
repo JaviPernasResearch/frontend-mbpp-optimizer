@@ -1,4 +1,4 @@
 import { atom } from 'jotai';
-import { IMOSBin } from '../types/BinTypes';
+import { Bin } from '../types/BinTypes';
 
-export const binDataState = atom<IMOSBin | null>(null);
+export const binDataState = atom<Bin | null>(null);

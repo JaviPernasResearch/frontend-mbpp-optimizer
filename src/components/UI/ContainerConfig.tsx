@@ -60,7 +60,7 @@ const ContainerConfig = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   <span className="truncate max-w-[180px]">
-                    {binData ? `IMOS Container (ID: ${binData.Id})` : fileName}
+                    {binData ? `IMOS Container (ID: ${binData.id})` : fileName}
                   </span>
                 </div>
                 <div className="flex space-x-2">

@@ -1,9 +1,9 @@
-import { OptimizationSettingsState } from '@/types/optimization';
+import { OptimizationSettings } from '@/types/optimization';
 import { useState } from 'react';
 
 
 export function useOptimizationSettings() {
-  const [settings, setSettings] = useState<OptimizationSettingsState>({
+  const [settings, setSettings] = useState<OptimizationSettings>({
     optimizationApproach: 'constraint-programming',
     groupSameOrderComponents: false,
     groupSameMaterialComponents: false,
@@ -19,7 +19,7 @@ export function useOptimizationSettings() {
   };
 
   // Handle goal toggle
-  const handleGoalToggle = (goal: keyof Omit<OptimizationSettingsState, 'optimizationApproach'>) => {
+  const handleGoalToggle = (goal: keyof Omit<OptimizationSettings, 'optimizationApproach'>) => {
     setSettings({ ...settings, [goal]: !settings[goal] });
   };
 

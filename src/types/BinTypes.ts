@@ -1,45 +1,11 @@
-// Common interface for Vector3 used in both IMOS and API schemas
+// Common interface for Vector3
 export interface Vector3 {
   X: number;
   Y: number;
   Z: number;
 }
 
-// IMOS format interfaces (for JSON loading)
-export interface IMOSSlot {
-  Guid: string;
-  Index: number;
-  GlobalIndex: number;
-  Origin: Vector3;
-  Size: Vector3;
-  Area?: number;
-}
-
-export interface IMOSModule {
-  Guid: string;
-  Index: number;
-  ModuleType: number;
-  Slots: {
-    $type: string;
-    $values: IMOSSlot[];
-  };
-  Origin: Vector3;
-  Size: Vector3;
-  Area: number;
-}
-
-export interface IMOSBin {
-  Guid: string;
-  Id: number;
-  Modules: {
-    $type: string;
-    $values: IMOSModule[];
-  };
-  Size: Vector3;
-  Area: number;
-}
-
-// API format interfaces (for optimization API)
+// API format interfaces (single source of truth)
 export interface Slot {
   guid: string;
   index: number;
@@ -97,28 +63,3 @@ export interface PackedPart {
   material_type: string;
   part_type: string;
 }
-
-// Helper function to convert from IMOS format to API format
-export const convertIMOSToAPIBin = (imosBin: IMOSBin, containerId: number): Bin => {
-  return {
-    guid: containerId === 0 ? imosBin.Guid : crypto.randomUUID(),
-    id: containerId,
-    modules: imosBin.Modules.$values.map(m => ({
-      guid: m.Guid,
-      index: m.Index,
-      module_type: m.ModuleType === 1 ? 'LARGE_SLOTS' : 'UNDEFINED',
-      slots: m.Slots.$values.map(s => ({
-        guid: s.Guid,
-        index: s.Index,
-        global_index: s.GlobalIndex,
-        origin: s.Origin,
-        size: s.Size
-      })),
-      origin: m.Origin,
-      size: m.Size,
-      area: m.Area
-    })),
-    size: imosBin.Size,
-    area: imosBin.Area
-  };
-};

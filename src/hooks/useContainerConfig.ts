@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { toast } from 'react-toastify';
 import { binDataState } from '@/states/binDataState';
-import { loadBinFromFile } from '@/services/BinService';
+import { loadBinFromFile } from '@/services/BinLoaderService';
 
 export function useContainerConfig() {
   const [isContainerConfigOpen, setContainerConfigOpen] = useState(true);
@@ -16,7 +16,7 @@ export function useContainerConfig() {
   // This effect ensures fileName is always in sync with binData
   useEffect(() => {
     if (binData && !fileName) {
-      setFileName(`IMOS Container (ID: ${binData.Id})`);
+      setFileName(`IMOS Container (ID: ${binData.id})`);
     } else if (!binData && fileName) {
       setFileName(null);
     }
@@ -49,17 +49,12 @@ export function useContainerConfig() {
     setIsLoading(true);
     
     try {
-      // Use the BinService to load the file
-      const { imosBin } = await loadBinFromFile(file);
+      // Use the BinService to load the file - now returns Bin directly
+      const bin = await loadBinFromFile(file);
       
-      if (imosBin) {
-        setFileName(file.name);
-        setBinData(imosBin);
-        toast.success('JSON container file loaded successfully!');
-      } else {
-        toast.error('Unsupported container format');
-        clearFileInput();
-      }
+      setFileName(file.name);
+      setBinData(bin);
+      toast.success('Container file loaded successfully!');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error loading file';
       toast.error(errorMessage);

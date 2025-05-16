@@ -1,6 +1,6 @@
 import React from 'react';
 import { useOptimizationSettings } from '../../hooks/useOptimizationSettings';
-import { OptimizationSettingsState } from '@/types/optimization';
+import { OptimizationSettings } from '@/types/optimization';
 
 const OptimizationSettings: React.FC = () => {
 
@@ -15,7 +15,7 @@ const OptimizationSettings: React.FC = () => {
   };
 
   // Handle goal toggle
-  const handleGoalToggle = (goal: keyof Omit<OptimizationSettingsState, 'optimizationApproach'>) => {
+  const handleGoalToggle = (goal: keyof Omit<OptimizationSettings, 'optimizationApproach'>) => {
     setSettings({ ...settings, [goal]: !settings[goal] });
   };
 

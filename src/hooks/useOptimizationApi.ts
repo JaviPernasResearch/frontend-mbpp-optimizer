@@ -2,19 +2,13 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
-import {
-  Bin,
-  Part,
-  OptimizationObjective,
-  OptimizationRequest,
-  convertIMOSToAPIBin
-} from '@/types/BinTypes';
-import { sendBinToBackend } from '@/services/BinService';
-import { OptimizationSettingsState, OptimizationSolutionState } from '@/types/optimization';
+import { Bin, Part } from '@/types/BinTypes';
+import { createContainerCopies, sendBinToBackend } from '@/services/BinLoaderService';
+import { OptimizationObjective, OptimizationRequest, OptimizationSettings, OptimizationSolution } from '@/types/optimization';
 
 export function useOptimizationApi() {
   const [binData] = useAtom(binDataState);
-  const [solution, setSolution] = useState<OptimizationSolutionState | null>(null);
+  const [solution, setSolution] = useState<OptimizationSolution | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
   
   // Create sample parts for demonstration
@@ -57,7 +51,7 @@ export function useOptimizationApi() {
 
   const runOptimization = async (
     containerCount: number,
-    settings: OptimizationSettingsState
+    settings: OptimizationSettings
   ) => {
     // Check if any container model is available
     if (!binData) {
@@ -68,10 +62,8 @@ export function useOptimizationApi() {
     setIsOptimizing(true);
     
     try {
-      // Create the bins from JSON data using our helper function
-      const bins: Bin[] = Array(containerCount)
-        .fill(null)
-        .map((_, i) => convertIMOSToAPIBin(binData, i));
+    // Create the bins from the binData using our helper function
+      const bins: Bin[] = createContainerCopies(binData, containerCount);
       
       // Create sample parts
       const parts = createSampleParts();
@@ -129,7 +121,7 @@ export function useOptimizationApi() {
       console.error('Error calling optimization API:', err);
       toast.warning('Using fallback solution (server not available)');
       
-      const mockSolution: OptimizationSolutionState = {
+      const mockSolution: OptimizationSolution = {
         status: "optimal",
         objective_value: 24.5,
         packed_parts: [
