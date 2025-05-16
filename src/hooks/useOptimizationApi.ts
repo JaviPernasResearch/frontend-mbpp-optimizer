@@ -5,9 +5,11 @@ import { binDataState } from '@/states/binDataState';
 import { Bin, Part } from '@/types/BinTypes';
 import { createContainerCopies, sendBinToBackend } from '@/services/BinLoaderService';
 import { OptimizationObjective, OptimizationRequest, OptimizationSettings, OptimizationSolution } from '@/types/optimization';
+import { containerCountState } from '@/states/containerCountState';
 
 export function useOptimizationApi() {
   const [binData] = useAtom(binDataState);
+  const [containerCount] = useAtom(containerCountState);
   const [solution, setSolution] = useState<OptimizationSolution | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
   

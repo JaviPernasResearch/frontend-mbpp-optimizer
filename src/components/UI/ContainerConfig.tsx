@@ -94,11 +94,12 @@ const ContainerConfig = () => {
             value={containerCount}
             onChange={(e) => setContainerCount(Math.max(1, parseInt(e.target.value) || 1))}
             min="1"
+            max="10"
             className="border rounded p-1 w-full" 
           />
         </div>
         <p className="text-xs text-gray-500 mt-1">
-          Specify how many containers are available for optimization.
+          Specify how many containers are available for optimization (max 10).
         </p>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FoldablePanel from '../UI/FoldablePanel';
 import ContainerConfig from '../UI/ContainerConfig';
-import OptimizationSettings from '../UI/OptimizationSettings';
+import OptimizationSettings from '../UI/OptimizationSettingsMenu';
 import OptimizationButton from '../UI/OptimizationButton';
 import { useContainerConfig } from '../../hooks/useContainerConfig';
 import { useOptimizationSettings } from '@/hooks/useOptimizationSettings';
@@ -18,7 +18,6 @@ const SettingsMenu = () => {
     toggleContainerConfig, 
     toggleOptimizationSettings,
     binData,
-    containerCount
   } = useContainerConfig();
   
   // Access optimization settings from a context or state
@@ -50,7 +49,7 @@ const SettingsMenu = () => {
     
     try {
       // Run the optimization with bin data
-      await runOptimization(containerCount, settings);
+      await runOptimization(settings);
     } catch (error) {
       console.error('Optimization error:', error);
       toast.error('Failed to optimize: ' + (error instanceof Error ? error.message : 'Unknown error'));

@@ -1,10 +1,13 @@
 import React from 'react';
+import { useAtom } from 'jotai';
 import { useOptimizationSettings } from '../../hooks/useOptimizationSettings';
 import { OptimizationSettings } from '@/types/optimization';
+import { containerCountState } from '@/states/containerCountState';
 
-const OptimizationSettings: React.FC = () => {
+const OptimizationSettingsMenu: React.FC = () => {
 
   const { settings, setSettings } = useOptimizationSettings();
+  const [containerCount] = useAtom(containerCountState);
 
   // Handle approach change
   const handleApproachChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -85,4 +88,4 @@ const OptimizationSettings: React.FC = () => {
   );
 };
 
-export default OptimizationSettings;
+export default OptimizationSettingsMenu;

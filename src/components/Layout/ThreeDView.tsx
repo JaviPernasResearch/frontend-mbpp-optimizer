@@ -3,14 +3,16 @@
 import { Canvas } from '@react-three/fiber';
 import { useState } from 'react';
 import { OrbitControls, Box, Text } from '@react-three/drei';
-import { useContainerConfig } from '../../hooks/useContainerConfig';
-import { useOptimizationApi } from '@/hooks/useOptimizationApi';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
+import { containerCountState } from '@/states/containerCountState'; 
+import { useOptimizationApi } from '@/hooks/useOptimizationApi';
 import OptimizedContainer from '../ThreeD/OptimizedContainer';
+import * as THREE from 'three';
 
 const ThreeDView = () => {
-  const { containerCount } = useContainerConfig();
+  // Use the shared container count atom
+  const [containerCount] = useAtom(containerCountState);
   const [binData] = useAtom(binDataState);
   const { solution } = useOptimizationApi();
   const [colorBy, setColorBy] = useState<'material' | 'assembly'>('material');
@@ -20,11 +22,11 @@ const ThreeDView = () => {
   // Get packed parts from solution if available
   const packedParts = solution?.packed_parts || [];
   
-  // Determine which containers have parts (from solution.bins_used if available, otherwise all)
+  // Determine which containers have parts in them
   const binsWithParts = solution?.bins_used || 
     (binData ? Array.from({ length: containerCount }, (_, i) => i) : []);
-  
-  // If binData is loaded, render the JSON bin model
+    
+  // If binData is loaded, render the container model
   if (binData) {
     return (
       <div className="relative w-full h-full">
@@ -44,10 +46,10 @@ const ThreeDView = () => {
           </button>
         </div>
         
-        {/* Container selection menu */}
+        {/* Container selection menu - now driven by containerCount */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 flex items-center gap-1 bg-white bg-opacity-75 px-3 py-2 rounded shadow-lg">
           <span className="text-sm mr-2">Container:</span>
-          {Array.from({ length: Math.min(containerCount, 10) }, (_, i) => (
+          {Array.from({ length: containerCount }, (_, i) => (
             <button
               key={i}
               onClick={() => setActiveContainerIndex(i)}
@@ -68,25 +70,29 @@ const ThreeDView = () => {
             <span className="text-xs italic ml-2">+{containerCount - 10} more</span>
           )}
           
-          <button 
-            onClick={() => setActiveContainerIndex((prev) => (prev + 1) % Math.min(containerCount, 10))}
-            className="ml-3 bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center"
-            title="Next container"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
-            </svg>
-          </button>
+          {containerCount > 1 && (
+            <button 
+              onClick={() => setActiveContainerIndex((prev) => (prev + 1) % containerCount)}
+              className="ml-3 bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center"
+              title="Next container"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+              </svg>
+            </button>
+          )}
         </div>
         
-        <Canvas camera={{ 
-          position: [1000, 600, 1000], 
-          far: 10000,
-        }}>
+        <Canvas 
+          camera={{ 
+            position: [1000, 600, 1000], 
+            far: 10000,
+          }}
+        >
           <ambientLight intensity={0.5} />
           <pointLight position={[500, 500, 500]} intensity={0.8} />
           <pointLight position={[-500, -500, -500]} intensity={0.2} />
-          <OrbitControls />
+          <OrbitControls/>
           
           <group rotation={[-Math.PI / 6, Math.PI / 6, 0]}>
             <OptimizedContainer

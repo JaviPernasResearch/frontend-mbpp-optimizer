@@ -238,11 +238,8 @@ const OptimizedContainer: React.FC<OptimizedContainerProps> = ({
     return null; // Return nothing if no bin data is available
   }
   
-  // Limit container count to 10
-  const limitedContainerCount = Math.min(containerCount, 10);
-  
   // Filter parts by container/bin ID
-  const partsByBin = Array.from({ length: limitedContainerCount }, (_, i) => 
+  const partsByBin = Array.from({ length: containerCount }, (_, i) => 
     packedParts.filter(part => part.bin_id === i)
   );
   
@@ -266,7 +263,7 @@ const OptimizedContainer: React.FC<OptimizedContainerProps> = ({
   };
   
   const dimensions = getContainerDimensions();
-   
+     
   return (
     <group>
       {/* Axes helper at the origin */}

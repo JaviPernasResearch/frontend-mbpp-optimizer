@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { toast } from 'react-toastify';
 import { binDataState } from '@/states/binDataState';
+import { containerCountState } from '@/states/containerCountState';
 import { loadBinFromFile } from '@/services/BinLoaderService';
 
 export function useContainerConfig() {
@@ -10,7 +11,7 @@ export function useContainerConfig() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [binData, setBinData] = useAtom(binDataState);
   const [isLoading, setIsLoading] = useState(false);
-  const [containerCount, setContainerCount] = useState<number>(1);
+  const [containerCount, setContainerCount] = useAtom(containerCountState);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // This effect ensures fileName is always in sync with binData
@@ -22,6 +23,11 @@ export function useContainerConfig() {
     }
   }, [binData, fileName]);
   
+  // Limit container count to 10
+  const handleContainerCountChange = (count: number) => {
+    setContainerCount(Math.min(Math.max(1, count), 10));
+  };
+
   const toggleContainerConfig = () => {
     setOptimizationSettingsOpen(false);
     setContainerConfigOpen(!isContainerConfigOpen);
@@ -49,7 +55,6 @@ export function useContainerConfig() {
     setIsLoading(true);
     
     try {
-      // Use the BinService to load the file - now returns Bin directly
       const bin = await loadBinFromFile(file);
       
       setFileName(file.name);
@@ -89,7 +94,7 @@ export function useContainerConfig() {
     binData,
     isLoading,
     containerCount,
-    setContainerCount,
+    setContainerCount: handleContainerCountChange,
     fileInputRef,
     toggleContainerConfig,
     toggleOptimizationSettings,
