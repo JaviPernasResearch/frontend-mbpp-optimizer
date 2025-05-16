@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
+import { useAtom } from 'jotai';
+import { binDataState } from '@/states/binDataState';
+import { IMOSBin } from '@/types/BinTypes';
 
 // Updated interfaces to match the backend schemas
 interface Vector3 {
@@ -85,45 +88,55 @@ export interface OptimizationSettings {
 }
 
 export function useOptimizationApi() {
+  const [binData] = useAtom(binDataState);
   const [solution, setSolution] = useState<OptimizationSolution | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
   
-  // Helper function to create a 3D container from STL data
-  const createBinFromStlData = (stlData: ArrayBuffer | null, containerCount: number): Bin[] => {
-    // In a real implementation, you would analyze the STL data
-    // For now, we'll create dummy containers based on the containerCount
-    return Array(containerCount).fill(null).map((_, index) => ({
-      guid: uuidv4(),
-      id: index,
-      modules: [
-        {
-          guid: uuidv4(),
-          index: 0,
-          module_type: "LARGE_SLOTS",
-          slots: [
-            {
-              guid: uuidv4(),
-              index: 0,
-              global_index: index * 2,
-              origin: { X: 0.0, Y: 0.0, Z: 0.0 },
-              size: { X: 22.0, Y: 2100.0, Z: 600.0 }
+  const createBinFromJsonData = (jsonBin: IMOSBin, containerCount: number): Bin[] => {
+    return Array(containerCount).fill(null).map((_, index) => {
+      // Convert from IMOS format to API format
+      return {
+        guid: index === 0 ? jsonBin.Guid : uuidv4(),
+        id: index,
+        modules: jsonBin.Modules.$values.map(m => ({
+          guid: m.Guid,
+          index: m.Index,
+          module_type: m.ModuleType === 1 ? 'LARGE_SLOTS' : 'UNDEFINED',
+          slots: m.Slots.$values.map(s => ({
+            guid: s.Guid,
+            index: s.Index,
+            global_index: s.GlobalIndex,
+            origin: {
+              X: s.Origin.X,
+              Y: s.Origin.Y,
+              Z: s.Origin.Z
             },
-            {
-              guid: uuidv4(),
-              index: 1,
-              global_index: index * 2 + 1,
-              origin: { X: 0.0, Y: 2100.0, Z: 0.0 },
-              size: { X: 22.0, Y: 2100.0, Z: 600.0 }
+            size: {
+              X: s.Size.X,
+              Y: s.Size.Y,
+              Z: s.Size.Z
             }
-          ],
-          origin: { X: 0.0, Y: 0.0, Z: 0.0 },
-          size: { X: 22.0, Y: 4200.0, Z: 600.0 },
-          area: 22.0 * 4200.0
-        }
-      ],
-      size: { X: 22.0, Y: 4200.0, Z: 600.0 },
-      area: 22.0 * 4200.0
-    }));
+          })),
+          origin: {
+            X: m.Origin.X,
+            Y: m.Origin.Y,
+            Z: m.Origin.Z
+          },
+          size: {
+            X: m.Size.X,
+            Y: m.Size.Y,
+            Z: m.Size.Z
+          },
+          area: m.Area
+        })),
+        size: {
+          X: jsonBin.Size.X,
+          Y: jsonBin.Size.Y,
+          Z: jsonBin.Size.Z
+        },
+        area: jsonBin.Area
+      };
+    });
   };
   
   // Create sample parts for demonstration
@@ -165,20 +178,20 @@ export function useOptimizationApi() {
   };
 
   const runOptimization = async (
-    stlData: ArrayBuffer | null,
     containerCount: number,
     settings: OptimizationSettings
   ) => {
-    if (!stlData) {
-      toast.error('Please upload an STL file first');
+    // Check if any container model is available
+    if (!binData) {
+      toast.error('Please upload a container JSON file first');
       return null;
     }
     
     setIsOptimizing(true);
     
     try {
-      // Create the bins from STL data
-      const bins = createBinFromStlData(stlData, containerCount);
+      // Create the bins from JSON data
+      const bins = createBinFromJsonData(binData, containerCount);
       
       // Create sample parts
       const parts = createSampleParts();

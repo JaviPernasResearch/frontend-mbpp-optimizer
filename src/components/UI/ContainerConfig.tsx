@@ -6,6 +6,7 @@ const ContainerConfig = () => {
     fileName,
     isLoading,
     fileInputRef,
+    binData,
     containerCount,
     setContainerCount,
     handleFileChange,
@@ -15,14 +16,14 @@ const ContainerConfig = () => {
 
   return (
     <div className="p-4 space-y-4">
-      {/* STL Upload Section */}
+      {/* Container Model Upload Section */}
       <div className="border rounded-md p-3 bg-gray-50">
-        <h3 className="font-medium text-sm mb-2">Container STL Model</h3>
+        <h3 className="font-medium text-sm mb-2">Container JSON Model</h3>
         
         <div className="flex flex-col space-y-2">
           <input
             type="file"
-            accept=".stl"
+            accept=".json"
             className="hidden"
             ref={fileInputRef}
             onChange={handleFileChange}
@@ -37,7 +38,7 @@ const ContainerConfig = () => {
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              Upload STL File
+              Upload JSON File
             </button>
           )}
           
@@ -47,7 +48,7 @@ const ContainerConfig = () => {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Loading STL file...
+              Loading JSON file...
             </div>
           )}
           
@@ -58,7 +59,9 @@ const ContainerConfig = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="truncate max-w-[180px]">{fileName}</span>
+                  <span className="truncate max-w-[180px]">
+                    {binData ? `IMOS Container (ID: ${binData.Id})` : fileName}
+                  </span>
                 </div>
                 <div className="flex space-x-2">
                   <button 

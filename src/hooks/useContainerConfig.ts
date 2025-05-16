@@ -1,34 +1,34 @@
-import { stlDataState } from '@/states/stlDataState';
-import { useAtom } from 'jotai';
 import { useState, useRef, useEffect } from 'react';
+import { useAtom } from 'jotai';
 import { toast } from 'react-toastify';
+import { binDataState } from '@/states/binDataState';
+import { IMOSBin } from '@/types/BinTypes';
 
 export function useContainerConfig() {
   const [isContainerConfigOpen, setContainerConfigOpen] = useState(true);
   const [isOptimizationSettingsOpen, setOptimizationSettingsOpen] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
-  const [stlData, setStlData] = useAtom(stlDataState); 
+  const [binData, setBinData] = useAtom(binDataState);
   const [isLoading, setIsLoading] = useState(false);
   const [containerCount, setContainerCount] = useState<number>(1);
-  const fileInputRef = useRef<HTMLInputElement>(null);  //The Document Object Model (DOM) is the data representation of the objects that comprise the structure and content of a document on the web
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // This effect ensures fileName is always in sync with stlData
-  // So when the panel reopens, it will display correctly
+  // This effect ensures fileName is always in sync with binData
   useEffect(() => {
-    if (stlData && !fileName) {
-      setFileName("STL Model"); // Default name if we have data but no filename
-    } else if (!stlData && fileName) {
-      setFileName(null); // Clear filename if no data
+    if (binData && !fileName) {
+      setFileName(`IMOS Container (ID: ${binData.Id})`);
+    } else if (!binData && fileName) {
+      setFileName(null);
     }
-  }, [stlData, fileName]);
+  }, [binData, fileName]);
   
   const toggleContainerConfig = () => {
-    setOptimizationSettingsOpen(false); // Close optimization settings when opening container config
+    setOptimizationSettingsOpen(false);
     setContainerConfigOpen(!isContainerConfigOpen);
   };
 
   const toggleOptimizationSettings = () => {
-    setContainerConfigOpen(false); // Close container config when opening optimization settings
+    setContainerConfigOpen(false);
     setOptimizationSettingsOpen(!isOptimizationSettingsOpen);
   };
 
@@ -36,51 +36,61 @@ export function useContainerConfig() {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       
-      // Check file extension
-      if (!file.name.toLowerCase().endsWith('.stl')) {
-        toast.error('Please upload a valid STL file.');
+      if (file.name.toLowerCase().endsWith('.json')) {
+        handleJsonFile(file);
+      } else {
+        toast.error('Please upload a valid JSON file.');
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
-        return;
       }
-  
-      setIsLoading(true);
-      
-      // Read file to validate and store it
-      const reader = new FileReader();
-      
-      reader.onload = (event) => {
-        try {
-          const result = event.target?.result;
+    }
+  };
+
+  const handleJsonFile = (file: File) => {
+    setIsLoading(true);
+    
+    // Read file to validate and store it
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+      try {
+        const result = event.target?.result;
+        
+        if (typeof result === 'string') {
+          const jsonData = JSON.parse(result) as IMOSBin;
           
-          if (result instanceof ArrayBuffer) {
-            // Additional validation if needed
-            
+          // Basic validation for IMOS bin structure
+          if (jsonData.Modules && jsonData.Guid) {
             setFileName(file.name);
-            setStlData(result);
-            toast.success('STL file uploaded successfully!');
+            setBinData(jsonData);
+            toast.success('JSON container file loaded successfully!');
+          } else {
+            toast.error('Invalid container JSON format.');
+            if (fileInputRef.current) {
+              fileInputRef.current.value = '';
+            }
           }
-        } catch (error) {
-          toast.error('Invalid STL file format.');
-          if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-          }
-        } finally {
-          setIsLoading(false);
         }
-      };
-      
-      reader.onerror = () => {
-        toast.error('Error reading the file.');
-        setIsLoading(false);
+      } catch (error) {
+        toast.error('Invalid JSON file format.');
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
-      };
-      
-      reader.readAsArrayBuffer(file);
-    }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    reader.onerror = () => {
+      toast.error('Error reading the file.');
+      setIsLoading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    };
+    
+    reader.readAsText(file);
   };
 
   const triggerFileInput = () => {
@@ -91,7 +101,7 @@ export function useContainerConfig() {
   
   const removeFile = () => {
     setFileName(null);
-    setStlData(null);
+    setBinData(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -101,7 +111,7 @@ export function useContainerConfig() {
     isContainerConfigOpen,
     isOptimizationSettingsOpen,
     fileName,
-    stlData,
+    binData,
     isLoading,
     containerCount,
     setContainerCount,

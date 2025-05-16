@@ -17,7 +17,7 @@ const SettingsMenu = () => {
     isOptimizationSettingsOpen, 
     toggleContainerConfig, 
     toggleOptimizationSettings,
-    stlData, // Get the STL data to check if loaded
+    binData,
     containerCount
   } = useContainerConfig();
   
@@ -25,68 +25,75 @@ const SettingsMenu = () => {
   const { settings } = useOptimizationSettings();
   const { isOptimizing, runOptimization, solution } = useOptimizationApi();
   
-  // Check if settings are properly configured
-  const areSettingsConfigured = Boolean(
-    // At least one optimization goal must be selected
-    (settings?.groupSameOrderComponents || 
-     settings?.groupSameMaterialComponents || 
-     settings?.minimizeSpaceWaste)
-  );
+  // Check if container model is loaded
+  const hasContainerModel = !!binData;
   
-  // Button is enabled only when STL is loaded AND settings are configured
-  const isOptimizationEnabled = Boolean(stlData) && areSettingsConfigured;
-
+  // Check if optimization settings are configured
+  const areSettingsConfigured = settings.minimizeSpaceWaste || 
+                              settings.groupSameMaterialComponents || 
+                              settings.groupSameOrderComponents;
+  
+  // Enable optimization button if both container model is loaded and settings are configured
+  const isOptimizationEnabled = hasContainerModel && areSettingsConfigured;
+  
+  // Handle optimization button click
   const handleOptimize = async () => {
-    if (!isOptimizationEnabled) {
-      if (!stlData) {
-        toast.warning('Please upload an STL file first');
-      } else if (!areSettingsConfigured) {
-        toast.warning('Select at least one optimization goal');
-      }
+    if (!hasContainerModel) {
+      toast.error('Please upload a container JSON file first');
       return;
     }
     
-    // The actual API call
-    const result = await runOptimization(stlData, containerCount, settings);
-    console.log('Optimization result:', result);
+    if (!areSettingsConfigured) {
+      toast.error('Please select at least one optimization goal');
+      return;
+    }
+    
+    try {
+      // Run the optimization with bin data
+      await runOptimization(containerCount, settings);
+    } catch (error) {
+      console.error('Optimization error:', error);
+      toast.error('Failed to optimize: ' + (error instanceof Error ? error.message : 'Unknown error'));
+    }
   };
-
+  
   return (
-    <div className="h-full flex flex-col">
-      {/* Header */}
-      <div className="p-6 border-b border-gray-200">
-        <h2 className="text-3xl font-bold text-gray-800">Settings Panel</h2>
-        <p className="text-sm text-gray-600 mt-1">Optimization Parameters</p>
+    <div className="w-80 bg-white h-full flex flex-col shadow-md">
+      <div className="p-4 border-b border-gray-200">
+        <h1 className="text-lg font-medium">Container Optimizer</h1>
+        <p className="text-sm text-gray-500">Configure and optimize container packing</p>
       </div>
       
-      {/* Settings sub-panels */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto">
+        {/* Container Configuration */}
         <FoldablePanel 
           title="Container Configuration" 
-          isOpen={isContainerConfigOpen} 
+          isOpen={isContainerConfigOpen}
           onToggle={toggleContainerConfig}
         >
           <ContainerConfig />
         </FoldablePanel>
         
+        {/* Optimization Settings */}
         <FoldablePanel 
           title="Optimization Settings" 
-          isOpen={isOptimizationSettingsOpen} 
+          isOpen={isOptimizationSettingsOpen}
           onToggle={toggleOptimizationSettings}
         >
           <OptimizationSettings />
         </FoldablePanel>
       </div>
       
-      <div className="p-4 border-t border-gray-200 bg-gray-50">
+      <div className="p-4 border-t border-gray-200">
         <OptimizationButton 
           onOptimize={handleOptimize}
           isEnabled={isOptimizationEnabled}
           isOptimizing={isOptimizing}
         />
+        
         <p className="text-xs text-center text-gray-500 mt-2">
-          {!stlData && "Upload a container model first"}
-          {stlData && !areSettingsConfigured && "Select at least one optimization goal"}
+          {!hasContainerModel && "Upload a container JSON file first"}
+          {hasContainerModel && !areSettingsConfigured && "Select at least one optimization goal"}
           {isOptimizationEnabled && !isOptimizing && "Ready to optimize"}
           {isOptimizing && "Optimization in progress..."}
         </p>
