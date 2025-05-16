@@ -1,24 +1,16 @@
-import React from 'react';
-import { Box, Text } from '@react-three/drei';
+import React, { useState, useEffect } from 'react';
+import { Box, Text, Grid, Html } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
-import { IMOSBin, Module as ModuleType } from '../../types/BinTypes';
-
-interface PackedPart {
-  part_id: number;
-  bin_id: number;
-  slot_id: number;
-  alignment: number;
-  assembly_id: number;
-  material_type: string;
-  part_type: string;
-}
+import { IMOSBin, IMOSModule as ModuleType, PackedPart} from '../../types/BinTypes';
+import * as THREE from 'three';
 
 interface OptimizedContainerProps {
   containerCount: number;
   packedParts?: PackedPart[];
   colorBy?: 'material' | 'assembly';
   showSlots?: boolean;
+  activeContainerIndex?: number;
 }
 
 const PartColors: Record<string, string> = {
@@ -70,15 +62,6 @@ const Slot: React.FC<{
   return (
     <Box args={[width, height, depth]} position={position}>
       <meshBasicMaterial color="gray" wireframe opacity={0.3} transparent />
-      <Text 
-        position={[0, 0, depth/2 + 5]}
-        color="black" 
-        fontSize={10}
-        anchorX="center"
-        anchorY="middle"
-      >
-        {`Slot ${index}`}
-      </Text>
     </Box>
   );
 };
@@ -91,14 +74,13 @@ const Module: React.FC<{
   return (
     <group position={position}>
       {showSlots && module.Slots.$values.map((slot) => {
-        // Convert the IMOS coordinates to Three.js coordinates
-        // Note: IMOS uses Y for height, Z for depth, X for width
-        // Three.js uses standard: X = width, Y = height, Z = depth
+        // IMOS: X = width, Y = height, Z = depth
+        // Three.js: X = width, Y = height, Z = depth (standard)
         const slotWidth = Math.abs(slot.Size.X);
         const slotHeight = Math.abs(slot.Size.Y);
         const slotDepth = Math.abs(slot.Size.Z);
-        
-        // Calculate position from the slot origin (center of the slot in IMOS)
+
+        // Position the center of the slot properly
         const slotX = slot.Origin.X + slotWidth/2;
         const slotY = slot.Origin.Y + slotHeight/2;
         const slotZ = slot.Origin.Z + slotDepth/2;
@@ -118,13 +100,44 @@ const Module: React.FC<{
   );
 };
 
+const ContainerSign: React.FC<{
+  containerId: number,
+  position: [number, number, number]
+}> = ({ containerId, position }) => {
+  return (
+    <group position={position}>
+      {/* Sign post */}
+      <Box args={[2, 80, 2]} position={[0, 40, 0]}>
+        <meshStandardMaterial color="#555" />
+      </Box>
+      
+      {/* Sign board */}
+      <Box args={[60, 40, 2]} position={[0, 90, 0]}>
+        <meshStandardMaterial color="#f0f0f0" />
+      </Box>
+      
+      {/* Container number text */}
+      <Text
+        position={[0, 90, 2]}
+        fontSize={20}
+        color="black"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Container {containerId}
+      </Text>
+    </group>
+  );
+};
+
 const IMOSContainer: React.FC<{
   bin: IMOSBin,
   position: [number, number, number],
   parts: PackedPart[],
   colorBy: 'material' | 'assembly',
-  showSlots: boolean
-}> = ({ bin, position, parts, colorBy, showSlots }) => {
+  showSlots: boolean,
+  containerId: number
+}> = ({ bin, position, parts, colorBy, showSlots, containerId }) => {
   // Calculate container dimensions from all modules
   const getContainerDimensions = () => {
     let maxX = 0, maxY = 0, maxZ = 0;
@@ -147,11 +160,12 @@ const IMOSContainer: React.FC<{
   const dimensions = getContainerDimensions();
   
   return (
-    <group position={position}>
-      {/* Container wireframe */}
-      <Box args={[dimensions.width, dimensions.height, dimensions.depth]} position={[dimensions.width/2, dimensions.height/2, dimensions.depth/2]}>
-        <meshBasicMaterial color="black" wireframe />
-      </Box>
+    <group position={position} rotation={[0, 0, 0]}>
+      {/* Container sign instead of wireframe box */}
+      <ContainerSign 
+        containerId={containerId} 
+        position={[dimensions.width/2, 0, -50]}
+      />
       
       {/* Render modules */}
       {bin.Modules.$values.map((module) => (
@@ -166,16 +180,14 @@ const IMOSContainer: React.FC<{
       {/* Render parts */}
       {parts.map((part) => {
         // Find the appropriate module and slot
-        // Logic to find which module this part belongs to based on slot_id
         const moduleIndex = Math.min(
-          Math.floor(part.slot_id / 100), // Rough approximation
+          Math.floor(part.slot_id / 100),
           bin.Modules.$values.length - 1
         );
         
         const module = bin.Modules.$values[moduleIndex];
-        // Find the slot within the module that matches this part's slot_id
         const slotIndex = Math.min(
-          part.slot_id % 100, // Rough approximation
+          part.slot_id % 100,
           module.Slots.$values.length - 1
         );
         
@@ -208,17 +220,6 @@ const IMOSContainer: React.FC<{
           />
         );
       })}
-      
-      {/* Container label */}
-      <Text 
-        position={[dimensions.width/2, -20, dimensions.depth/2]}
-        color="black" 
-        fontSize={15}
-        anchorX="center"
-        anchorY="middle"
-      >
-        Container {bin.Id}
-      </Text>
     </group>
   );
 };
@@ -227,7 +228,8 @@ const OptimizedContainer: React.FC<OptimizedContainerProps> = ({
   containerCount, 
   packedParts = [], 
   colorBy = 'material',
-  showSlots = true
+  showSlots = true,
+  activeContainerIndex = 0
 }) => {
   // Use binData from Jotai
   const [binData] = useAtom(binDataState);
@@ -236,23 +238,63 @@ const OptimizedContainer: React.FC<OptimizedContainerProps> = ({
     return null; // Return nothing if no bin data is available
   }
   
+  // Limit container count to 10
+  const limitedContainerCount = Math.min(containerCount, 10);
+  
   // Filter parts by container/bin ID
-  const partsByBin = Array.from({ length: containerCount }, (_, i) => 
+  const partsByBin = Array.from({ length: limitedContainerCount }, (_, i) => 
     packedParts.filter(part => part.bin_id === i)
   );
   
+  // Calculate container dimensions for axis positioning
+  const getContainerDimensions = () => {
+    let maxX = 0, maxY = 0, maxZ = 0;
+    
+    binData.Modules.$values.forEach(module => {
+      module.Slots.$values.forEach(slot => {
+        const endX = slot.Origin.X + Math.abs(slot.Size.X);
+        const endY = slot.Origin.Y + Math.abs(slot.Size.Y);
+        const endZ = Math.abs(slot.Size.Z);
+        
+        maxX = Math.max(maxX, endX);
+        maxY = Math.max(maxY, endY);
+        maxZ = Math.max(maxZ, Math.abs(endZ));
+      });
+    });
+    
+    return { width: maxX, height: maxY, depth: maxZ };
+  };
+  
+  const dimensions = getContainerDimensions();
+   
   return (
     <group>
-      {Array.from({ length: containerCount }).map((_, index) => (
-        <IMOSContainer 
-          key={index}
-          bin={binData}
-          position={[index * 1200, 0, 0]}
-          parts={partsByBin[index] || []}
-          colorBy={colorBy}
-          showSlots={showSlots}
-        />
-      ))}
+      {/* Axes helper at the origin */}
+      <primitive object={new THREE.AxesHelper(1000)} />
+      
+      {/* Add a grid to show the ground plane at the origin */}
+      <Grid 
+        args={[dimensions.width * 1.5, dimensions.depth * 1.5]} 
+        position={[dimensions.width/2, 0, dimensions.depth/2]} 
+        cellSize={20}
+        cellThickness={0.5}
+        cellColor="#6f6f6f"
+        sectionSize={100}
+        sectionThickness={1}
+        sectionColor="#9d4b4b"
+        rotation={[-Math.PI/2, 0, 0]}
+      />
+      
+      {/* Only render the active container, positioned in front of the axes */}
+      <IMOSContainer 
+        key={activeContainerIndex}
+        bin={binData}
+        position={[0, 0, dimensions.depth]}  // Keep the container at origin
+        parts={partsByBin[activeContainerIndex] || []}
+        colorBy={colorBy}
+        showSlots={showSlots}
+        containerId={activeContainerIndex}
+      />
     </group>
   );
 };

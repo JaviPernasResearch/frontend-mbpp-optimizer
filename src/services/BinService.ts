@@ -1,6 +1,9 @@
-import { IMOSBin } from '../types/BinTypes';
+import { IMOSBin, Bin } from '../types/BinTypes';
 
-export const loadBinFromFile = (file: File): Promise<IMOSBin> => {
+/**
+ * Loads and validates an IMOS bin JSON file
+ */
+export const loadIMOSBinFromFile = (file: File): Promise<IMOSBin> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     
@@ -8,9 +11,16 @@ export const loadBinFromFile = (file: File): Promise<IMOSBin> => {
       try {
         const content = event.target?.result as string;
         const binData = JSON.parse(content) as IMOSBin;
+        
+        // Validate IMOS bin structure
+        if (!binData.Modules || !binData.Guid) {
+          reject(new Error('Invalid IMOS container format'));
+          return;
+        }
+        
         resolve(binData);
       } catch (error) {
-        reject(new Error('Failed to parse bin JSON file'));
+        reject(new Error('Failed to parse IMOS bin JSON file'));
       }
     };
     
@@ -22,7 +32,61 @@ export const loadBinFromFile = (file: File): Promise<IMOSBin> => {
   });
 };
 
-export const sendBinToBackend = async (bin: IMOSBin, containerCount: number) => {
+/**
+ * Loads and validates an API format bin JSON file
+ */
+export const loadApiBinFromFile = (file: File): Promise<Bin> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string;
+        const binData = JSON.parse(content) as Bin;
+        
+        // Validate API bin structure
+        if (!binData.modules || !binData.guid) {
+          reject(new Error('Invalid API container format'));
+          return;
+        }
+        
+        resolve(binData);
+      } catch (error) {
+        reject(new Error('Failed to parse API bin JSON file'));
+      }
+    };
+    
+    reader.onerror = () => {
+      reject(new Error('Failed to read bin file'));
+    };
+    
+    reader.readAsText(file);
+  });
+};
+
+/**
+ * Validates JSON file format and loads the appropriate bin format
+ */
+export const loadBinFromFile = async (file: File): Promise<{ imosBin?: IMOSBin, apiBin?: Bin }> => {
+  try {
+    // First try to load as IMOS format
+    const imosBin = await loadIMOSBinFromFile(file);
+    return { imosBin };
+  } catch (imosError) {
+    // If that fails, try API format
+    try {
+      const apiBin = await loadApiBinFromFile(file);
+      return { apiBin };
+    } catch (apiError) {
+      throw new Error('File is neither a valid IMOS nor API container format');
+    }
+  }
+};
+
+/**
+ * Sends bin data to the backend optimization API
+ */
+export const sendBinToBackend = async (bin: Bin, containerCount: number, objectives: any[] = []) => {
   try {
     const response = await fetch('/api/optimize/proto-bin-packing', {
       method: 'POST',
@@ -34,7 +98,7 @@ export const sendBinToBackend = async (bin: IMOSBin, containerCount: number) => 
         containerCount,
         // Add other required fields from your schema
         parts: [], // This would be filled by the backend sample data or your own data
-        objectives: [
+        objectives: objectives.length > 0 ? objectives : [
           {
             objective_type: "WASTED_SPACE", 
             weight: 1.0,

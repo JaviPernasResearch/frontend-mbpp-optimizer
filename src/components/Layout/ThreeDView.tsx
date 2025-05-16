@@ -15,9 +15,14 @@ const ThreeDView = () => {
   const { solution } = useOptimizationApi();
   const [colorBy, setColorBy] = useState<'material' | 'assembly'>('material');
   const [showSlots, setShowSlots] = useState<boolean>(true);
+  const [activeContainerIndex, setActiveContainerIndex] = useState<number>(0);
   
   // Get packed parts from solution if available
   const packedParts = solution?.packed_parts || [];
+  
+  // Determine which containers have parts (from solution.bins_used if available, otherwise all)
+  const binsWithParts = solution?.bins_used || 
+    (binData ? Array.from({ length: containerCount }, (_, i) => i) : []);
   
   // If binData is loaded, render the JSON bin model
   if (binData) {
@@ -39,7 +44,45 @@ const ThreeDView = () => {
           </button>
         </div>
         
-        <Canvas camera={{ position: [1000, 600, 1000], far: 10000 }}>
+        {/* Container selection menu */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 flex items-center gap-1 bg-white bg-opacity-75 px-3 py-2 rounded shadow-lg">
+          <span className="text-sm mr-2">Container:</span>
+          {Array.from({ length: Math.min(containerCount, 10) }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveContainerIndex(i)}
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm
+                ${activeContainerIndex === i 
+                  ? 'bg-blue-600 text-white' 
+                  : binsWithParts.includes(i)
+                    ? 'bg-green-100 hover:bg-blue-200'
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+              title={`Container ${i}${binsWithParts.includes(i) ? ' (contains parts)' : ''}`}
+            >
+              {i}
+            </button>
+          ))}
+          
+          {containerCount > 10 && (
+            <span className="text-xs italic ml-2">+{containerCount - 10} more</span>
+          )}
+          
+          <button 
+            onClick={() => setActiveContainerIndex((prev) => (prev + 1) % Math.min(containerCount, 10))}
+            className="ml-3 bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center"
+            title="Next container"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+              <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+            </svg>
+          </button>
+        </div>
+        
+        <Canvas camera={{ 
+          position: [1000, 600, 1000], 
+          far: 10000,
+        }}>
           <ambientLight intensity={0.5} />
           <pointLight position={[500, 500, 500]} intensity={0.8} />
           <pointLight position={[-500, -500, -500]} intensity={0.2} />
@@ -51,7 +94,11 @@ const ThreeDView = () => {
               packedParts={packedParts}
               colorBy={colorBy}
               showSlots={showSlots}
+              activeContainerIndex={activeContainerIndex}
             />
+            <Text position={[1100, 0, 0]} color="red" fontSize={50}>X</Text>
+            <Text position={[0, 1100, 0]} color="green" fontSize={50}>Y</Text>
+            <Text position={[0, 0, 1100]} color="blue" fontSize={50}>Z</Text>
           </group>
         </Canvas>
       </div>

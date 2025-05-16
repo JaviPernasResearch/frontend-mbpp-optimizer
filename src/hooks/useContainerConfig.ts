@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { toast } from 'react-toastify';
 import { binDataState } from '@/states/binDataState';
-import { IMOSBin } from '@/types/BinTypes';
+import { loadBinFromFile } from '@/services/BinService';
 
 export function useContainerConfig() {
   const [isContainerConfigOpen, setContainerConfigOpen] = useState(true);
@@ -40,57 +40,39 @@ export function useContainerConfig() {
         handleJsonFile(file);
       } else {
         toast.error('Please upload a valid JSON file.');
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
+        clearFileInput();
       }
     }
   };
 
-  const handleJsonFile = (file: File) => {
+  const handleJsonFile = async (file: File) => {
     setIsLoading(true);
     
-    // Read file to validate and store it
-    const reader = new FileReader();
-    
-    reader.onload = (event) => {
-      try {
-        const result = event.target?.result;
-        
-        if (typeof result === 'string') {
-          const jsonData = JSON.parse(result) as IMOSBin;
-          
-          // Basic validation for IMOS bin structure
-          if (jsonData.Modules && jsonData.Guid) {
-            setFileName(file.name);
-            setBinData(jsonData);
-            toast.success('JSON container file loaded successfully!');
-          } else {
-            toast.error('Invalid container JSON format.');
-            if (fileInputRef.current) {
-              fileInputRef.current.value = '';
-            }
-          }
-        }
-      } catch (error) {
-        toast.error('Invalid JSON file format.');
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
-      } finally {
-        setIsLoading(false);
+    try {
+      // Use the BinService to load the file
+      const { imosBin } = await loadBinFromFile(file);
+      
+      if (imosBin) {
+        setFileName(file.name);
+        setBinData(imosBin);
+        toast.success('JSON container file loaded successfully!');
+      } else {
+        toast.error('Unsupported container format');
+        clearFileInput();
       }
-    };
-    
-    reader.onerror = () => {
-      toast.error('Error reading the file.');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error loading file';
+      toast.error(errorMessage);
+      clearFileInput();
+    } finally {
       setIsLoading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    };
-    
-    reader.readAsText(file);
+    }
+  };
+
+  const clearFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const triggerFileInput = () => {
@@ -102,9 +84,7 @@ export function useContainerConfig() {
   const removeFile = () => {
     setFileName(null);
     setBinData(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    clearFileInput();
   };
 
   return {
