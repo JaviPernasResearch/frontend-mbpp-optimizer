@@ -1,0 +1,244 @@
+{
+  "parts": [
+    {
+      "guid": "part_001",
+      "size": {
+        "X": 19.0,
+        "Y": 600.0,
+        "Z": 450.0
+      },
+      "material": "P2_MFB_19",
+      "part_type": "SIDEWALL",
+      "position_nr": "SW_LEFT",
+      "assembly_id": 1001
+    },
+    {
+      "guid": "part_002",
+      "size": {
+        "X": 19.0,
+        "Y": 600.0,
+        "Z": 450.0
+      },
+      "material": "P2_MFB_19",
+      "part_type": "SIDEWALL",
+      "position_nr": "SW_RIGHT",
+      "assembly_id": 1001
+    },
+    {
+      "guid": "part_003",
+      "size": {
+        "X": 19.0,
+        "Y": 550.0,
+        "Z": 400.0
+      },
+      "material": "P2_MFB_19",
+      "part_type": "MITTELBODEN",
+      "position_nr": "MB_TOP",
+      "assembly_id": 1001
+    },
+    {
+      "guid": "part_004",
+      "size": {
+        "X": 19.0,
+        "Y": 550.0,
+        "Z": 400.0
+      },
+      "material": "P2_MFB_19",
+      "part_type": "MITTELBODEN",
+      "position_nr": "MB_BOTTOM",
+      "assembly_id": 1001
+    },
+    {
+      "guid": "part_005",
+      "size": {
+        "X": 16.0,
+        "Y": 540.0,
+        "Z": 380.0
+      },
+      "material": "MPX_ROH_16",
+      "part_type": "EINLEGEBODEN",
+      "position_nr": "EB_1",
+      "assembly_id": 1001
+    },
+    {
+      "guid": "part_006",
+      "size": {
+        "X": 16.0,
+        "Y": 540.0,
+        "Z": 380.0
+      },
+      "material": "MPX_ROH_16",
+      "part_type": "EINLEGEBODEN",
+      "position_nr": "EB_2",
+      "assembly_id": 1001
+    },
+    {
+      "guid": "part_007",
+      "size": {
+        "X": 22.0,
+        "Y": 800.0,
+        "Z": 500.0
+      },
+      "material": "P2_MFB_22",
+      "part_type": "SIDEWALL",
+      "position_nr": "SW_LEFT",
+      "assembly_id": 1002
+    },
+    {
+      "guid": "part_008",
+      "size": {
+        "X": 22.0,
+        "Y": 800.0,
+        "Z": 500.0
+      },
+      "material": "P2_MFB_22",
+      "part_type": "SIDEWALL",
+      "position_nr": "SW_RIGHT",
+      "assembly_id": 1002
+    },
+    {
+      "guid": "part_009",
+      "size": {
+        "X": 22.0,
+        "Y": 750.0,
+        "Z": 450.0
+      },
+      "material": "P2_MFB_22",
+      "part_type": "MITTELBODEN",
+      "position_nr": "MB_TOP",
+      "assembly_id": 1002
+    },
+    {
+      "guid": "part_010",
+      "size": {
+        "X": 22.0,
+        "Y": 750.0,
+        "Z": 450.0
+      },
+      "material": "P2_MFB_22",
+      "part_type": "MITTELBODEN",
+      "position_nr": "MB_BOTTOM",
+      "assembly_id": 1002
+    },
+    {
+      "guid": "part_011",
+      "size": {
+        "X": 9.0,
+        "Y": 740.0,
+        "Z": 430.0
+      },
+      "material": "P2_MFB_9",
+      "part_type": "EINLEGEBODEN",
+      "position_nr": "EB_1",
+      "assembly_id": 1002
+    },
+    {
+      "guid": "part_012",
+      "size": {
+        "X": 9.0,
+        "Y": 740.0,
+        "Z": 430.0
+      },
+      "material": "P2_MFB_9",
+      "part_type": "EINLEGEBODEN",
+      "position_nr": "EB_2",
+      "assembly_id": 1002
+    },
+    {
+      "guid": "part_013",
+      "size": {
+        "X": 9.0,
+        "Y": 740.0,
+        "Z": 430.0
+      },
+      "material": "P2_MFB_9",
+      "part_type": "EINLEGEBODEN",
+      "position_nr": "EB_3",
+      "assembly_id": 1002
+    },
+    {
+      "guid": "part_014",
+      "size": {
+        "X": 15.0,
+        "Y": 400.0,
+        "Z": 300.0
+      },
+      "material": "MPX_ROH_15",
+      "part_type": "SIDEWALL",
+      "position_nr": "SW_LEFT",
+      "assembly_id": 1003
+    },
+    {
+      "guid": "part_015",
+      "size": {
+        "X": 15.0,
+        "Y": 400.0,
+        "Z": 300.0
+      },
+      "material": "MPX_ROH_15",
+      "part_type": "SIDEWALL",
+      "position_nr": "SW_RIGHT",
+      "assembly_id": 1003
+    },
+    {
+      "guid": "part_016",
+      "size": {
+        "X": 15.0,
+        "Y": 380.0,
+        "Z": 280.0
+      },
+      "material": "MPX_ROH_15",
+      "part_type": "MITTELBODEN",
+      "position_nr": "MB_TOP",
+      "assembly_id": 1003
+    },
+    {
+      "guid": "part_017",
+      "size": {
+        "X": 15.0,
+        "Y": 380.0,
+        "Z": 280.0
+      },
+      "material": "MPX_ROH_15",
+      "part_type": "MITTELBODEN",
+      "position_nr": "MB_BOTTOM",
+      "assembly_id": 1003
+    },
+    {
+      "guid": "part_018",
+      "size": {
+        "X": 25.0,
+        "Y": 950.0,
+        "Z": 550.0
+      },
+      "material": "MDF",
+      "part_type": "SIDEWALL",
+      "position_nr": "SW_LEFT",
+      "assembly_id": 1004
+    },
+    {
+      "guid": "part_019",
+      "size": {
+        "X": 25.0,
+        "Y": 950.0,
+        "Z": 550.0
+      },
+      "material": "MDF",
+      "part_type": "SIDEWALL",
+      "position_nr": "SW_RIGHT",
+      "assembly_id": 1004
+    },
+    {
+      "guid": "part_020",
+      "size": {
+        "X": 25.0,
+        "Y": 900.0,
+        "Z": 500.0
+      },
+      "material": "MDF",
+      "part_type": "MITTELBODEN",
+      "position_nr": "MB_TOP",
+      "assembly_id": 1004
+    }
+  ]
+}

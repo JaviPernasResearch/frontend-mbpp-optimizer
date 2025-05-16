@@ -1,4 +1,4 @@
-import { Bin, Module, Slot } from '../types/BinTypes';
+import { Bin, Part, Slot, Module } from '../types/BinTypes';
 
 /**
  * A specialized JSON parser that can handle both IMOS format and API format
@@ -115,5 +115,53 @@ export class JsonParserService {
     }
     
     return bins;
+  }
+
+  /**
+   * Parse a JSON string and attempt to convert it to our Parts array
+   */
+  static parseParts(jsonString: string): Part[] {
+    // First, parse the JSON string normally
+    const data = JSON.parse(jsonString);
+    
+    // Check if this is an array of parts
+    if (Array.isArray(data)) {
+      return data.map(item => this.validateAndNormalizePart(item));
+    } 
+    // Check if this is a wrapper object with parts array inside
+    else if (data && typeof data === 'object' && 'parts' in data && Array.isArray(data.parts)) {
+      return data.parts.map((item: any) => this.validateAndNormalizePart(item));
+    }
+    // Handle case where it's a single part object
+    else if (data && typeof data === 'object' && 'guid' in data) {
+      return [this.validateAndNormalizePart(data)];
+    }
+    else {
+      throw new Error('Invalid parts format - expected array of parts or object with parts array');
+    }
+  }
+  
+  /**
+   * Validate and normalize part data to ensure it matches our Part type
+   */
+  private static validateAndNormalizePart(part: any): Part {
+    // Validate mandatory fields
+    if (!part.guid || !part.size) {
+      throw new Error('Invalid part format - missing required fields (guid, size)');
+    }
+    
+    // Normalize the part object to match our schema
+    return {
+      guid: part.guid,
+      size: {
+        X: Number(part.size.X || part.size.x || 0),
+        Y: Number(part.size.Y || part.size.y || 0),
+        Z: Number(part.size.Z || part.size.z || 0)
+      },
+      material: part.material || part.material_type || 'UNDEFINED',
+      part_type: part.part_type || 'UNDEFINED',
+      position_nr: part.position_nr || part.position || '',
+      assembly_id: Number(part.assembly_id || part.assemblyId || 0)
+    };
   }
 }

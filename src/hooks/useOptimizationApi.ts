@@ -6,9 +6,11 @@ import { Bin, Part } from '@/types/BinTypes';
 import { createContainerCopies, sendBinToBackend } from '@/services/BinLoaderService';
 import { OptimizationObjective, OptimizationRequest, OptimizationSettings, OptimizationSolution } from '@/types/optimization';
 import { containerCountState } from '@/states/containerCountState';
+import { partsDataState } from '@/states/partsDataState';
 
 export function useOptimizationApi() {
   const [binData] = useAtom(binDataState);
+  const [partsData] = useAtom(partsDataState);
   const [containerCount] = useAtom(containerCountState);
   const [solution, setSolution] = useState<OptimizationSolution | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
@@ -51,10 +53,7 @@ export function useOptimizationApi() {
     ];
   };
 
-  const runOptimization = async (
-    containerCount: number,
-    settings: OptimizationSettings
-  ) => {
+  const runOptimization = async (settings: OptimizationSettings) => {
     // Check if any container model is available
     if (!binData) {
       toast.error('Please upload a container JSON file first');
@@ -64,11 +63,13 @@ export function useOptimizationApi() {
     setIsOptimizing(true);
     
     try {
-    // Create the bins from the binData using our helper function
+      // Create the bins from JSON data using our helper function
       const bins: Bin[] = createContainerCopies(binData, containerCount);
       
-      // Create sample parts
-      const parts = createSampleParts();
+      // Use uploaded parts if available, otherwise create sample parts
+      const parts = partsData || createSampleParts();
+      
+      console.log(`Using ${parts.length} parts (${partsData ? 'from uploaded file' : 'sample parts'})`);
       
       // Build objectives based on settings
       const objectives: OptimizationObjective[] = [];
@@ -108,16 +109,24 @@ export function useOptimizationApi() {
       toast.info('Starting optimization...');
       console.log("Sending optimization request:", requestBody);
       
-      try {
-        // Use the BinService to send the optimization request
-        const data = await sendBinToBackend(bins[0], containerCount, objectives);
-        console.log("Optimization result:", data);
-        setSolution(data);
-        toast.success('Optimization completed successfully!');
-        return data;
-      } catch (apiError) {
-        throw new Error(`API call failed: ${apiError instanceof Error ? apiError.message : 'Unknown error'}`);
+      const response = await fetch('http://localhost:8000/optimize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API call failed with status: ${response.status}`);
       }
+      
+      const data = await response.json();
+      console.log("Optimization result:", data);
+      setSolution(data);
+      toast.success('Optimization completed successfully!');
+      
+      return data;
     } catch (err: any) {
       // If the server is not running, return a mock solution
       console.error('Error calling optimization API:', err);
@@ -136,7 +145,33 @@ export function useOptimizationApi() {
             material_type: "P2_MFB_19",
             part_type: "SIDEWALL"
           },
-          // ... mock solution data ...
+          {
+            part_id: 2,
+            bin_id: 0,
+            slot_id: 0,
+            alignment: 0,
+            assembly_id: 101,
+            material_type: "P2_MFB_19",
+            part_type: "SIDEWALL"
+          },
+          {
+            part_id: 3,
+            bin_id: 0,
+            slot_id: 1,
+            alignment: 0,
+            assembly_id: 102,
+            material_type: "P2_MFB_9",
+            part_type: "MITTELBODEN" 
+          },
+          {
+            part_id: 4,
+            bin_id: 0, 
+            slot_id: 1,
+            alignment: 1,
+            assembly_id: 102,
+            material_type: "MPX_ROH_15",
+            part_type: "EINLEGEBODEN"
+          }
         ],
         bins_used: [0],
         error: null,

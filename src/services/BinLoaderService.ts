@@ -1,4 +1,4 @@
-import { Bin } from '../types/BinTypes';
+import { Bin, Part } from '../types/BinTypes';
 import { JsonParserService } from './JsonParserService';
 
 /**
@@ -21,6 +21,32 @@ export const loadBinFromFile = (file: File): Promise<Bin> => {
     
     reader.onerror = () => {
       reject(new Error('Failed to read bin file'));
+    };
+    
+    reader.readAsText(file);
+  });
+};
+
+/**
+ * Loads and validates a parts JSON file
+ */
+export const loadPartsFromFile = (file: File): Promise<Part[]> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string;
+        // Use our custom parser to handle parts data
+        const partsData = JsonParserService.parseParts(content);
+        resolve(partsData);
+      } catch (error) {
+        reject(new Error(`Failed to parse parts file: ${error instanceof Error ? error.message : 'Unknown error'}`));
+      }
+    };
+    
+    reader.onerror = () => {
+      reject(new Error('Failed to read parts file'));
     };
     
     reader.readAsText(file);

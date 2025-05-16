@@ -2,17 +2,22 @@ import { useState, useRef, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { toast } from 'react-toastify';
 import { binDataState } from '@/states/binDataState';
+import { partsDataState } from '@/states/partsDataState';
 import { containerCountState } from '@/states/containerCountState';
-import { loadBinFromFile } from '@/services/BinLoaderService';
+import { loadBinFromFile, loadPartsFromFile } from '@/services/BinLoaderService';
 
 export function useContainerConfig() {
   const [isContainerConfigOpen, setContainerConfigOpen] = useState(true);
   const [isOptimizationSettingsOpen, setOptimizationSettingsOpen] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [partsFileName, setPartsFileName] = useState<string | null>(null);
   const [binData, setBinData] = useAtom(binDataState);
+  const [partsData, setPartsData] = useAtom(partsDataState);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingParts, setIsLoadingParts] = useState(false);
   const [containerCount, setContainerCount] = useAtom(containerCountState);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const partsFileInputRef = useRef<HTMLInputElement>(null);
 
   // This effect ensures fileName is always in sync with binData
   useEffect(() => {
@@ -51,6 +56,19 @@ export function useContainerConfig() {
     }
   };
 
+  const handlePartsFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      
+      if (file.name.toLowerCase().endsWith('.json')) {
+        handlePartsJsonFile(file);
+      } else {
+        toast.error('Please upload a valid JSON file.');
+        clearPartsFileInput();
+      }
+    }
+  };
+
   const handleJsonFile = async (file: File) => {
     setIsLoading(true);
     
@@ -69,9 +87,33 @@ export function useContainerConfig() {
     }
   };
 
+  const handlePartsJsonFile = async (file: File) => {
+    setIsLoadingParts(true);
+    
+    try {
+      const parts = await loadPartsFromFile(file);
+      
+      setPartsFileName(file.name);
+      setPartsData(parts);
+      toast.success(`Parts file with ${parts.length} parts loaded successfully!`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error loading parts file';
+      toast.error(errorMessage);
+      clearPartsFileInput();
+    } finally {
+      setIsLoadingParts(false);
+    }
+  };
+
   const clearFileInput = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+  };
+
+  const clearPartsFileInput = () => {
+    if (partsFileInputRef.current) {
+      partsFileInputRef.current.value = '';
     }
   };
 
@@ -81,25 +123,44 @@ export function useContainerConfig() {
     }
   };
   
+  const triggerPartsFileInput = () => {
+    if (partsFileInputRef.current) {
+      partsFileInputRef.current.click();
+    }
+  };
+  
   const removeFile = () => {
     setFileName(null);
     setBinData(null);
     clearFileInput();
+  };
+  
+  const removePartsFile = () => {
+    setPartsFileName(null);
+    setPartsData(null);
+    clearPartsFileInput();
   };
 
   return {
     isContainerConfigOpen,
     isOptimizationSettingsOpen,
     fileName,
+    partsFileName,
     binData,
+    partsData,
     isLoading,
+    isLoadingParts,
     containerCount,
     setContainerCount: handleContainerCountChange,
     fileInputRef,
+    partsFileInputRef,
     toggleContainerConfig,
     toggleOptimizationSettings,
     handleFileChange,
+    handlePartsFileChange,
     triggerFileInput,
+    triggerPartsFileInput,
     removeFile,
+    removePartsFile,
   };
 }

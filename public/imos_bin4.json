@@ -1,0 +1,873 @@
+{
+  "$type": "BinPacking.Commons.Bins.Bin, BinPacking.Commons",
+  "Guid": "8d01acb4-0d7b-408d-9e04-5c93a685f463",
+  "Id": 0,
+  "Modules": {
+    "$type": "System.Collections.Generic.List`1[[BinPacking.Commons.Modules.IModule, BinPacking.Commons]], mscorlib",
+    "$values": [
+      {
+        "$type": "BinPacking.Commons.Modules.Module, BinPacking.Commons",
+        "Guid": "5b56561e-fbc5-4d08-ad1b-a7a5de4491b9",
+        "Index": 1,
+        "ModuleType": 1,
+        "Slots": {
+          "$type": "System.Collections.Generic.List`1[[BinPacking.Commons.Slots.ISlot, BinPacking.Commons]], mscorlib",
+          "$values": [
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "f0c6bab9-1afd-4e3d-bad2-9a0ec0c0081a",
+              "Index": 1,
+              "GlobalIndex": 0,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 2100.0,
+                "Z": -600.0
+              },
+              "Area": 46200.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "df64c604-4b28-4eda-bf86-c942bbfc63aa",
+              "Index": 2,
+              "GlobalIndex": 1,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 64.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 2100.0,
+                "Z": -600.0
+              },
+              "Area": 46200.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "92c4a8e8-f401-4910-a042-922fb0689c9f",
+              "Index": 3,
+              "GlobalIndex": 2,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 128.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 2100.0,
+                "Z": -600.0
+              },
+              "Area": 46200.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "b8ba641b-2b43-4c5f-8f53-6f3b2e7b5eb7",
+              "Index": 4,
+              "GlobalIndex": 3,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 192.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 2100.0,
+                "Z": -600.0
+              },
+              "Area": 46200.0
+            }
+          ]
+        },
+        "Origin": {
+          "$type": "System.Numerics.Vector3, System.Numerics",
+          "X": 21.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Size": {
+          "$type": "System.Numerics.Vector3, System.Numerics",
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Area": 0.0
+      },
+      {
+        "$type": "BinPacking.Commons.Modules.Module, BinPacking.Commons",
+        "Guid": "14cb743d-4735-41fe-b6ab-7bf77910b455",
+        "Index": 2,
+        "ModuleType": 1,
+        "Slots": {
+          "$type": "System.Collections.Generic.List`1[[BinPacking.Commons.Slots.ISlot, BinPacking.Commons]], mscorlib",
+          "$values": [
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "8870418b-0d82-4969-99ac-8e98225edad1",
+              "Index": 1,
+              "GlobalIndex": 4,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "5ad0fe95-6868-409e-84ef-1e9b37f82e5c",
+              "Index": 2,
+              "GlobalIndex": 5,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 64.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "3d324622-983c-4a2d-8d6c-a3aac03212ca",
+              "Index": 3,
+              "GlobalIndex": 6,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 128.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "12e54d8c-071b-4115-ae7a-a1628b36640d",
+              "Index": 4,
+              "GlobalIndex": 7,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 192.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "b0035385-2c88-4ba1-b9d4-acb85be1dfec",
+              "Index": 5,
+              "GlobalIndex": 8,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 256.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "deba5854-f4eb-4a0f-86f4-d871a7fecd1e",
+              "Index": 6,
+              "GlobalIndex": 9,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 320.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "2b3e9b95-2822-4208-8c19-eccd76613e76",
+              "Index": 7,
+              "GlobalIndex": 10,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 384.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "b3b37edf-1576-4f43-a4f9-ef33fcb1dfd0",
+              "Index": 8,
+              "GlobalIndex": 11,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 448.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "feb182d4-8a6c-4c03-9f17-d1d9a2164609",
+              "Index": 9,
+              "GlobalIndex": 12,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 512.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "1debf111-0a69-4d73-9990-259dcd589534",
+              "Index": 10,
+              "GlobalIndex": 13,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 576.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "ad679b43-c5bd-491b-bca8-794ced2f290d",
+              "Index": 11,
+              "GlobalIndex": 14,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 640.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "1c3cd0af-ec64-4f40-9930-c757f3e6ebcf",
+              "Index": 12,
+              "GlobalIndex": 15,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 704.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "ea3383f8-47ab-43c5-9ab8-1b5fcf953e96",
+              "Index": 13,
+              "GlobalIndex": 16,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 768.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "8f626d49-facc-4318-8dae-86a29ab846b2",
+              "Index": 14,
+              "GlobalIndex": 17,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 832.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "bd9109cf-9704-429d-9cde-1473ebbe5e02",
+              "Index": 15,
+              "GlobalIndex": 18,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 896.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "fc70a530-07da-483b-a8d0-085069f92f27",
+              "Index": 16,
+              "GlobalIndex": 19,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 960.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 800.0,
+                "Z": -600.0
+              },
+              "Area": 17600.0
+            }
+          ]
+        },
+        "Origin": {
+          "$type": "System.Numerics.Vector3, System.Numerics",
+          "X": 277.0,
+          "Y": 1300.0,
+          "Z": 0.0
+        },
+        "Size": {
+          "$type": "System.Numerics.Vector3, System.Numerics",
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Area": 0.0
+      },
+      {
+        "$type": "BinPacking.Commons.Modules.Module, BinPacking.Commons",
+        "Guid": "b8c64d87-f96e-4341-bfea-dedaa5552934",
+        "Index": 3,
+        "ModuleType": 1,
+        "Slots": {
+          "$type": "System.Collections.Generic.List`1[[BinPacking.Commons.Slots.ISlot, BinPacking.Commons]], mscorlib",
+          "$values": [
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "5dde2e67-269d-4e1c-b04c-40e81c16ab68",
+              "Index": 1,
+              "GlobalIndex": 20,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "d12c4e24-7159-46d3-be6c-38efae5378a4",
+              "Index": 2,
+              "GlobalIndex": 21,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 64.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "57b58fe0-e711-40c5-8fe5-06759574e735",
+              "Index": 3,
+              "GlobalIndex": 22,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 128.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "851dc97b-3cb3-49ec-94a2-c5cb0cffda2b",
+              "Index": 4,
+              "GlobalIndex": 23,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 192.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "85648918-4c5a-47ba-b236-7eb74cc20394",
+              "Index": 5,
+              "GlobalIndex": 24,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 256.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "8113becf-35d3-4c83-8066-357d8614aa4b",
+              "Index": 6,
+              "GlobalIndex": 25,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 320.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "44ee6e97-027c-4867-8914-af725f1b94d4",
+              "Index": 7,
+              "GlobalIndex": 26,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 384.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "7e6da106-143d-4567-8d7b-35ada10e8555",
+              "Index": 8,
+              "GlobalIndex": 27,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 448.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "12c51824-e3af-4f81-b367-72d4ff155265",
+              "Index": 9,
+              "GlobalIndex": 28,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 512.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "971db45d-134b-4414-b0b1-96e3d4c9d4d6",
+              "Index": 10,
+              "GlobalIndex": 29,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 576.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "707f8b54-5093-49a2-ad9a-0f4400e8b68b",
+              "Index": 11,
+              "GlobalIndex": 30,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 640.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "21890dc2-d71f-483b-9d06-0f41128a2a4b",
+              "Index": 12,
+              "GlobalIndex": 31,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 704.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "8f628c05-f258-4e3f-9a63-ae082c0a1d46",
+              "Index": 13,
+              "GlobalIndex": 32,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 768.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "5462a8e4-bdf2-456d-855e-05cb3bf3dd04",
+              "Index": 14,
+              "GlobalIndex": 33,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 832.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "1b18f6cb-7ee9-4995-bb03-8c51c623749c",
+              "Index": 15,
+              "GlobalIndex": 34,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 896.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "53eef85d-503d-4628-b64a-dfbd590d3298",
+              "Index": 16,
+              "GlobalIndex": 35,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 960.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 760.0,
+                "Z": -600.0
+              },
+              "Area": 16720.0
+            }
+          ]
+        },
+        "Origin": {
+          "$type": "System.Numerics.Vector3, System.Numerics",
+          "X": 277.0,
+          "Y": 500.0,
+          "Z": 0.0
+        },
+        "Size": {
+          "$type": "System.Numerics.Vector3, System.Numerics",
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Area": 0.0
+      },
+      {
+        "$type": "BinPacking.Commons.Modules.Module, BinPacking.Commons",
+        "Guid": "60a1d1f8-b6cf-4df0-a704-2d44eaeb3ffa",
+        "Index": 4,
+        "ModuleType": 1,
+        "Slots": {
+          "$type": "System.Collections.Generic.List`1[[BinPacking.Commons.Slots.ISlot, BinPacking.Commons]], mscorlib",
+          "$values": [
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "2c9970b6-0dcd-43ee-8b89-d4344efe07a8",
+              "Index": 1,
+              "GlobalIndex": 36,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 0.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 1600.0,
+                "Z": -600.0
+              },
+              "Area": 35200.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "07ade92b-e74a-4c1d-9550-a1562124147a",
+              "Index": 2,
+              "GlobalIndex": 37,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 64.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 1600.0,
+                "Z": -600.0
+              },
+              "Area": 35200.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "31d6d82b-0b07-4284-a903-edf0ac45c779",
+              "Index": 3,
+              "GlobalIndex": 38,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 128.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 1600.0,
+                "Z": -600.0
+              },
+              "Area": 35200.0
+            },
+            {
+              "$type": "BinPacking.Commons.Slots.Slot, BinPacking.Commons",
+              "Guid": "a4f2b364-78fb-4ca5-82b9-0c1b14b7db8a",
+              "Index": 4,
+              "GlobalIndex": 39,
+              "Origin": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 192.0,
+                "Y": 0.0,
+                "Z": -600.0
+              },
+              "Size": {
+                "$type": "System.Numerics.Vector3, System.Numerics",
+                "X": 22.0,
+                "Y": 1600.0,
+                "Z": -600.0
+              },
+              "Area": 35200.0
+            }
+          ]
+        },
+        "Origin": {
+          "$type": "System.Numerics.Vector3, System.Numerics",
+          "X": 1301.0,
+          "Y": 500.0,
+          "Z": 0.0
+        },
+        "Size": {
+          "$type": "System.Numerics.Vector3, System.Numerics",
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.0
+        },
+        "Area": 0.0
+      }
+    ]
+  },
+  "Size": {
+    "$type": "System.Numerics.Vector3, System.Numerics",
+    "X": 0.0,
+    "Y": 0.0,
+    "Z": 0.0
+  },
+  "Area": 0.0
+}
