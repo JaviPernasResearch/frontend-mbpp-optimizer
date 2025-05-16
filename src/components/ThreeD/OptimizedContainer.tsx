@@ -74,7 +74,7 @@ const Module: React.FC<{
   return (
     <group position={position}>
       {showSlots && module.slots.map((slot) => {
-        // IMOS: X = width, Y = height, Z = depth
+        // 3D: X = width, Y = height, Z = depth
         // Three.js: X = width, Y = height, Z = depth (standard)
         const slotWidth = Math.abs(slot.size.X);
         const slotHeight = Math.abs(slot.size.Y);
@@ -100,37 +100,39 @@ const Module: React.FC<{
   );
 };
 
-const ContainerSign: React.FC<{
+const ContainerGroundLabel: React.FC<{
   containerId: number,
-  position: [number, number, number]
-}> = ({ containerId, position }) => {
+  dimensions: { width: number, height: number, depth: number }
+}> = ({ containerId, dimensions }) => {
   return (
-    <group position={position}>
-      {/* Sign post */}
-      <Box args={[2, 80, 2]} position={[0, 40, 0]}>
-        <meshStandardMaterial color="#555" />
-      </Box>
-      
-      {/* Sign board */}
-      <Box args={[60, 40, 2]} position={[0, 90, 0]}>
-        <meshStandardMaterial color="#f0f0f0" />
-      </Box>
-      
-      {/* Container number text */}
+    <group>
+      {/* Container number text on the ground */}
       <Text
-        position={[0, 90, 2]}
-        fontSize={20}
-        color="black"
+        position={[dimensions.width/2, 5, 200]} // Positioned in front of container on the ground
+        rotation={[-Math.PI/2, 0, 0]} // Rotate to lie flat on the ground
+        fontSize={100}
+        color="#3366cc"
         anchorX="center"
         anchorY="middle"
+        renderOrder={1} // Ensure text renders above grid
+        maxWidth={dimensions.width * 0.8}
       >
         Container {containerId}
       </Text>
+      
+      {/* Optional: Add a transparent background plate for better visibility */}
+      <mesh 
+        position={[dimensions.width/2, -0.5, 200]}
+        rotation={[-Math.PI/2, 0, 0]}
+      >
+        <planeGeometry args={[dimensions.width * 0.65, 200]} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0.7} />
+      </mesh>
     </group>
   );
 };
 
-const IMOSContainer: React.FC<{
+const ThreeDBin: React.FC<{
   bin: Bin,
   position: [number, number, number],
   parts: PackedPart[],
@@ -161,10 +163,10 @@ const IMOSContainer: React.FC<{
   
   return (
     <group position={position} rotation={[0, 0, 0]}>
-      {/* Container sign instead of wireframe box */}
-      <ContainerSign 
-        containerId={containerId} 
-        position={[dimensions.width/2, 0, -50]}
+      {/* Container ground label instead of sign post */}
+      <ContainerGroundLabel 
+        containerId={containerId}
+        dimensions={dimensions} 
       />
       
       {/* Render modules */}
@@ -233,6 +235,7 @@ const OptimizedContainer: React.FC<OptimizedContainerProps> = ({
 }) => {
   // Use binData from Jotai
   const [binData] = useAtom(binDataState);
+
   
   if (!binData) {
     return null; // Return nothing if no bin data is available
@@ -263,27 +266,30 @@ const OptimizedContainer: React.FC<OptimizedContainerProps> = ({
   };
   
   const dimensions = getContainerDimensions();
-     
+  
   return (
     <group>
       {/* Axes helper at the origin */}
       <primitive object={new THREE.AxesHelper(1000)} />
       
-      {/* Add a grid to show the ground plane at the origin */}
-      <Grid 
-        args={[dimensions.width * 1.5, dimensions.depth * 1.5]} 
-        position={[dimensions.width/2, 0, dimensions.depth/2]} 
-        cellSize={20}
-        cellThickness={0.5}
-        cellColor="#6f6f6f"
-        sectionSize={100}
-        sectionThickness={1}
-        sectionColor="#9d4b4b"
-        rotation={[-Math.PI/2, 0, 0]}
+      {/* Add a more visible grid to show the ground plane */}
+      <gridHelper 
+        args={[dimensions.width * 2, 10, '#444444', '#888888']} 
+        position={[dimensions.width/2, 0, dimensions.depth/2]}
+        rotation={[0, 0, 0]}
       />
       
+      {/* Add a colored ground plane for even better visibility */}
+      <mesh 
+        position={[dimensions.width/2, -1, dimensions.depth/2]} 
+        rotation={[-Math.PI/2, 0, 0]}
+      >
+        <planeGeometry args={[dimensions.width * 2, dimensions.depth * 2]} />
+        <meshBasicMaterial color="#f0f0f0" transparent opacity={0.3} side={THREE.DoubleSide} />
+      </mesh>
+      
       {/* Only render the active container, positioned in front of the axes */}
-      <IMOSContainer 
+      <ThreeDBin 
         key={activeContainerIndex}
         bin={binData}
         position={[0, 0, dimensions.depth]}  // Keep the container at origin
