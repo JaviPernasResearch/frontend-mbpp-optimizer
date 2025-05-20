@@ -121,69 +121,33 @@ export function useOptimizationApi() {
         body: JSON.stringify(requestBody)
       });
       
-      if (!response.ok) {
-        throw new Error(`API call failed with status: ${response.status}`);
+    // Parse JSON response even if it's an error
+      const data = await response.json();
+        console.log("Optimization result:", data);
+
+      // Check if the response has an error field
+      if (data.error) {
+        toast.error(`Optimization failed: ${data.status}`);
+        return null;
       }
       
-      const data = await response.json();
-      console.log("Optimization result:", data);
+      // If response wasn't ok but didn't have an error field
+      if (!response.ok) {
+        const errorMessage = `API call failed with status: ${response.status}`;
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+            
+      // Check for solution status that indicates issues
+      toast.success(`Optimization completed. Status: ${data.status}`);
+      //If timeout but solved or optimal, then set solution.
       setSolution(data);
-      toast.success('Optimization completed successfully!');
-      
-      return data;
+
     } catch (err: any) {
       // If the server is not running, return a mock solution
       console.error('Error calling optimization API:', err);
       toast.warning('Using fallback solution (server not available)');
       
-      const mockSolution: OptimizationSolution = {
-        status: "optimal",
-        objective_value: 24.5,
-        packed_parts: [
-          {
-            part_id: 1,
-            bin_id: 0,
-            slot_id: 0,
-            alignment: 0,
-            assembly_id: 101,
-            material_type: "P2_MFB_19",
-            part_type: "SIDEWALL"
-          },
-          {
-            part_id: 2,
-            bin_id: 0,
-            slot_id: 0,
-            alignment: 0,
-            assembly_id: 101,
-            material_type: "P2_MFB_19",
-            part_type: "SIDEWALL"
-          },
-          {
-            part_id: 3,
-            bin_id: 0,
-            slot_id: 1,
-            alignment: 0,
-            assembly_id: 102,
-            material_type: "P2_MFB_9",
-            part_type: "MITTELBODEN" 
-          },
-          {
-            part_id: 4,
-            bin_id: 0, 
-            slot_id: 1,
-            alignment: 1,
-            assembly_id: 102,
-            material_type: "MPX_ROH_15",
-            part_type: "EINLEGEBODEN"
-          }
-        ],
-        bins_used: [0],
-        error: null,
-        solve_time_seconds: 0.45
-      };
-      
-      setSolution(mockSolution);
-      return mockSolution;
     } finally {
       setIsOptimizing(false);
     }

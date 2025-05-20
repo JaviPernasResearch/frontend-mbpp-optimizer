@@ -14,7 +14,7 @@ const ThreeDView = () => {
   // Use the shared container count atom
   const [containerCount] = useAtom(binCountState);
   const [binData] = useAtom(binDataState);
-  const { solution, isOptimizing, runOptimization } = useOptimizationApi();
+  const { solution } = useOptimizationApi();
   const [colorBy, setColorBy] = useState<'material' | 'assembly'>('material');
   const [showSlots, setShowSlots] = useState<boolean>(true);
   const [activeContainerIndex, setActiveContainerIndex] = useState<number>(0);
