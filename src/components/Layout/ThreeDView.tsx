@@ -23,6 +23,10 @@ const ThreeDView = () => {
   const [showSlots, setShowSlots] = useState<boolean>(true);
   const [activeBinIndex, setActiveBinIndex] = useState<number>(0);
   
+  // Add state for grid visibility
+  const [showGrid, setShowGrid] = useState<boolean>(true);
+  const [showAxes, setShowAxes] = useState<boolean>(true);
+  
   // Get packed parts from solution if available
   const packedParts = solution?.packed_parts || [];
   
@@ -121,6 +125,22 @@ const ThreeDView = () => {
             {showSlots ? 'Hide Slots' : 'Show Slots'}
           </button>
           
+          {/* Add grid toggle button */}
+          <button 
+            onClick={() => setShowGrid(!showGrid)}
+            className="bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 py-1 px-3 rounded shadow-md transition-all"
+          >
+            {showGrid ? 'Hide Grid' : 'Show Grid'}
+          </button>
+          
+          {/* Add axes toggle button */}
+          <button 
+            onClick={() => setShowAxes(!showAxes)}
+            className="bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 py-1 px-3 rounded shadow-md transition-all"
+          >
+            {showAxes ? 'Hide Axes' : 'Show Axes'}
+          </button>
+          
           {/* Debug info display */}
           <div className="mt-2 bg-white bg-opacity-80 p-2 rounded text-xs">
             <p><strong>Solution:</strong> {solution ? 'Yes' : 'No'}</p>
@@ -195,13 +215,18 @@ const ThreeDView = () => {
             <Text position={[0, 1100, 0]} color="green" fontSize={50}>Y</Text>
             <Text position={[0, 0, 1100]} color="blue" fontSize={50}>Z</Text>
             
-            {/* Add a ground grid */}
-            <gridHelper 
-              args={[5000, 50]}
-              position={[500, -10, 500]}
-            />
-            {/* Axes helper at the origin */}
-            <primitive object={new AxesHelper(5000)} />
+            {/* Add a ground grid - only show if showGrid is true */}
+            {showGrid && (
+              <gridHelper 
+                args={[5000, 50]}
+                position={[500, -10, 500]}
+              />
+            )}
+            
+            {/* Axes helper at the origin - only show if showAxes is true */}
+            {showAxes && (
+              <primitive object={new AxesHelper(5000)} />
+            )}
           </group>
         </Canvas>
       </div>
@@ -237,7 +262,8 @@ const ThreeDView = () => {
           Upload a container JSON file to get started
         </Text>
         
-        <gridHelper args={[10, 10]} />
+        {/* Also make this grid conditional */}
+        {showGrid && <gridHelper args={[10, 10]} />}
       </Canvas>
     </div>
   );

@@ -46,7 +46,7 @@ class CameraManager {
 
   getPresets() {
     return {
-      isometric: () => this.setCameraPosition([2000, 1500, 2000], [500, 0, 500]),
+      isometric: () => this.setCameraPosition([2000, 2500, 2000], [500, 0, 500]),
       top: () => this.setCameraPosition([500, 2500, 500], [500, 0, 500]),
       side: () => this.setCameraPosition([2500, 500, 500], [500, 0, 500]),
       front: () => this.setCameraPosition([500, 500, 2500], [500, 0, 500])
