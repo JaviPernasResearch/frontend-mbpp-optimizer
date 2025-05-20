@@ -1,20 +1,20 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { OrbitControls, Box, Text } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
 import { containerCountState } from '@/states/containerCountState'; 
 import { useOptimizationApi } from '@/hooks/useOptimizationApi';
 import OptimizedContainer from '../ThreeD/OptimizedContainer';
-import * as THREE from 'three';
+import { toast } from 'react-toastify';
 
 const ThreeDView = () => {
   // Use the shared container count atom
   const [containerCount] = useAtom(containerCountState);
   const [binData] = useAtom(binDataState);
-  const { solution } = useOptimizationApi();
+  const { solution, isOptimizing, runOptimization } = useOptimizationApi();
   const [colorBy, setColorBy] = useState<'material' | 'assembly'>('material');
   const [showSlots, setShowSlots] = useState<boolean>(true);
   const [activeContainerIndex, setActiveContainerIndex] = useState<number>(0);
@@ -22,10 +22,40 @@ const ThreeDView = () => {
   // Get packed parts from solution if available
   const packedParts = solution?.packed_parts || [];
   
+  // Effect to observe solution changes
+  useEffect(() => {
+    if (solution) {
+      console.log("Solution loaded in ThreeDView:", solution);
+      console.log("Parts to render:", packedParts.length);
+      
+      // If we have parts and bins_used is not empty
+      if (packedParts.length > 0 && solution.bins_used?.length > 0) {
+        // Automatically switch to first bin with parts if not currently viewing one
+        if (!solution.bins_used.includes(activeContainerIndex)) {
+          setActiveContainerIndex(solution.bins_used[0]);
+          toast.info(`Switching to container ${solution.bins_used[0]} with packed parts`);
+        }
+      }
+    }
+  }, [solution, activeContainerIndex]);
+
+  
   // Determine which containers have parts in them
   const binsWithParts = solution?.bins_used || 
     (binData ? Array.from({ length: containerCount }, (_, i) => i) : []);
     
+  // Create a runOptimizationDemo function for testing
+  const runOptimizationDemo = async () => {
+    const result = await runOptimization({
+      optimizationApproach: 'constraint-programming',
+      groupSameOrderComponents: true,
+      groupSameMaterialComponents: true,
+      minimizeSpaceWaste: true
+    });
+    
+    console.log("Optimization demo completed with result:", result);
+  };
+  
   // If binData is loaded, render the container model
   if (binData) {
     return (
@@ -44,6 +74,23 @@ const ThreeDView = () => {
           >
             {showSlots ? 'Hide Slots' : 'Show Slots'}
           </button>
+          
+          {/* Test button to run optimization directly */}
+          <button 
+            onClick={runOptimizationDemo}
+            disabled={isOptimizing}
+            className="bg-blue-500 text-white py-1 px-3 rounded shadow-md transition-all disabled:opacity-50"
+          >
+            {isOptimizing ? 'Optimizing...' : 'Run Demo Optimization'}
+          </button>
+          
+          {/* Debug info display */}
+          <div className="mt-2 bg-white bg-opacity-80 p-2 rounded text-xs">
+            <p><strong>Solution:</strong> {solution ? 'Yes' : 'No'}</p>
+            <p><strong>Total Parts:</strong> {packedParts.length}</p>
+            <p><strong>Active Container:</strong> {activeContainerIndex}</p>
+            <p><strong>Container Parts:</strong> {packedParts.filter(p => p.bin_id === activeContainerIndex).length}</p>
+          </div>
         </div>
         
         {/* Container selection menu - now driven by containerCount */}
@@ -60,7 +107,7 @@ const ThreeDView = () => {
                     ? 'bg-green-100 hover:bg-blue-200'
                     : 'bg-gray-100 hover:bg-gray-200'
                 }`}
-              title={`Container ${i}${binsWithParts.includes(i) ? ' (contains parts)' : ''}`}
+              title={`Container ${i}${binsWithParts.includes(i) ? ` (${packedParts.filter(p => p.bin_id === i).length} parts)` : ''}`}
             >
               {i}
             </button>

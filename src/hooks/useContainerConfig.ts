@@ -9,7 +9,7 @@ import { loadBinFromFile, loadPartsFromFile } from '@/services/BinLoaderService'
 export function useContainerConfig() {
   const [isContainerConfigOpen, setContainerConfigOpen] = useState(true);
   const [isOptimizationSettingsOpen, setOptimizationSettingsOpen] = useState(false);
-  const [fileName, setFileName] = useState<string | null>(null);
+  const [binFileName, setFileName] = useState<string | null>(null);
   const [partsFileName, setPartsFileName] = useState<string | null>(null);
   const [binData, setBinData] = useAtom(binDataState);
   const [partsData, setPartsData] = useAtom(partsDataState);
@@ -21,13 +21,23 @@ export function useContainerConfig() {
 
   // This effect ensures fileName is always in sync with binData
   useEffect(() => {
-    if (binData && !fileName) {
-      setFileName(`IMOS Container (ID: ${binData.id})`);
-    } else if (!binData && fileName) {
+    if (binData && !binFileName) {
+      setFileName(`Container (ID: ${binData.id})`);
+    } else if (!binData && binFileName) {
       setFileName(null);
     }
-  }, [binData, fileName]);
-  
+  }, [binData, binFileName]);
+
+  // This effect ensures partsFileName is always in sync with partsData
+    useEffect(() => {
+    if (partsData && !partsFileName) {
+      setPartsFileName(`Parts (ID: ${partsData.map(part => part.guid).join(', ')})`);
+    } else if (!partsData && partsFileName) {
+      setPartsFileName(null);
+    }
+  }, [partsData, partsFileName]);
+
+
   // Limit container count to 10
   const handleContainerCountChange = (count: number) => {
     setContainerCount(Math.min(Math.max(1, count), 10));
@@ -144,7 +154,7 @@ export function useContainerConfig() {
   return {
     isContainerConfigOpen,
     isOptimizationSettingsOpen,
-    fileName,
+    fileName: binFileName,
     partsFileName,
     binData,
     partsData,

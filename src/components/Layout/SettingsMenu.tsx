@@ -15,17 +15,19 @@ const SettingsMenu = () => {
   const { 
     isContainerConfigOpen, 
     isOptimizationSettingsOpen, 
+    binData,
+    partsData,
     toggleContainerConfig, 
     toggleOptimizationSettings,
-    binData,
   } = useContainerConfig();
   
   // Access optimization settings from a context or state
   const { settings } = useOptimizationSettings();
   const { isOptimizing, runOptimization, solution } = useOptimizationApi();
   
-  // Check if container model is loaded
+  // Check if container/parts model is loaded
   const hasContainerModel = !!binData;
+  const hasPartsModel = !!partsData;
   
   // Check if optimization settings are configured
   const areSettingsConfigured = settings.minimizeSpaceWaste || 
@@ -33,12 +35,17 @@ const SettingsMenu = () => {
                               settings.groupSameOrderComponents;
   
   // Enable optimization button if both container model is loaded and settings are configured
-  const isOptimizationEnabled = hasContainerModel && areSettingsConfigured;
+  const isOptimizationEnabled = hasContainerModel && hasPartsModel && areSettingsConfigured;
   
   // Handle optimization button click
   const handleOptimize = async () => {
     if (!hasContainerModel) {
       toast.error('Please upload a container JSON file first');
+      return;
+    }
+
+    if (!hasPartsModel) {
+      toast.error('Please upload a parts JSON file first');
       return;
     }
     
@@ -92,7 +99,8 @@ const SettingsMenu = () => {
         
         <p className="text-xs text-center text-gray-500 mt-2">
           {!hasContainerModel && "Upload a container JSON file first"}
-          {hasContainerModel && !areSettingsConfigured && "Select at least one optimization goal"}
+          {!hasPartsModel && "Upload a parts JSON file first"}
+          {hasContainerModel && hasPartsModel && !areSettingsConfigured && "Select at least one optimization goal"}
           {isOptimizationEnabled && !isOptimizing && "Ready to optimize"}
           {isOptimizing && "Optimization in progress..."}
         </p>
