@@ -1,26 +1,33 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { useState, useEffect } from 'react';
-import { OrbitControls, Box, Text } from '@react-three/drei';
+import { useState, useEffect, useRef } from 'react';
+import { Box, Text } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
 import { binCountState } from '@/states/binCountState'; 
 import { useOptimizationApi } from '@/hooks/useOptimizationApi';
 import OptimizedContainer from '../ThreeD/OptimizedContainer';
+import CameraController from '../ThreeD/CameraController';
 import { toast } from 'react-toastify';
+import { cameraManager } from '@/utils/cameraManager';
+import { Object3D, } from 'three';
+import { OrbitControls } from '@react-three/drei';
 
 const ThreeDView = () => {
-  // Use the shared container count atom
-  const [containerCount] = useAtom(binCountState);
+  // Existing state
+  const [binCount] = useAtom(binCountState);
   const [binData] = useAtom(binDataState);
   const { solution } = useOptimizationApi();
   const [colorBy, setColorBy] = useState<'material' | 'assembly'>('material');
   const [showSlots, setShowSlots] = useState<boolean>(true);
-  const [activeContainerIndex, setActiveContainerIndex] = useState<number>(0);
+  const [activeBinIndex, setActiveBinIndex] = useState<number>(0);
   
   // Get packed parts from solution if available
   const packedParts = solution?.packed_parts || [];
+  
+  // Reference to the container group for camera fitting
+  const containerRef = useRef<Object3D>(null);
   
   // Effect to observe solution changes
   useEffect(() => {
@@ -28,27 +35,78 @@ const ThreeDView = () => {
       console.log("Solution loaded in ThreeDView:", solution);
       console.log("Parts to render:", packedParts.length);
       
-      // If we have parts and bins_used is not empty
       if (packedParts.length > 0 && solution.bins_used?.length > 0) {
-        // Automatically switch to first bin with parts if not currently viewing one
-        if (!solution.bins_used.includes(activeContainerIndex)) {
-          setActiveContainerIndex(solution.bins_used[0]);
+        if (!solution.bins_used.includes(activeBinIndex)) {
+          setActiveBinIndex(solution.bins_used[0]);
           toast.info(`Switching to container ${solution.bins_used[0]} with packed parts`);
         }
       }
     }
-  }, [solution, activeContainerIndex]);
-
+  }, [solution, activeBinIndex, packedParts]);
   
   // Determine which containers have parts in them
   const binsWithParts = solution?.bins_used || 
-    (binData ? Array.from({ length: containerCount }, (_, i) => i) : []);
-      
+    (binData ? Array.from({ length: binCount }, (_, i) => i) : []);
+  
+  // Get container size for camera target
+  const containerSize = binData?.size || { X: 1000, Y: 600, Z: 1000 };
+  
+  // Camera preset handlers
+  const handleCameraPreset = (preset: 'isometric' | 'top' | 'side' | 'front') => {
+    const presets = cameraManager.getPresets();
+    presets[preset]();
+  };
+  
+  const handleFitToContainer = () => {
+    if (containerRef.current) {
+      cameraManager.fitCameraToObject(containerRef.current);
+    }
+  };
+  
   // If binData is loaded, render the container model
   if (binData) {
     return (
       <div className="relative w-full h-full">
-        {/* Controls */}
+        {/* Camera control buttons */}
+        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+          <div className="bg-white bg-opacity-80 p-3 rounded shadow-md">
+            <h3 className="text-sm font-bold mb-2">Camera Views</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => handleCameraPreset('isometric')}
+                className="bg-blue-500 text-white text-xs py-1 px-2 rounded"
+              >
+                Isometric
+              </button>
+              <button
+                onClick={() => handleCameraPreset('top')}
+                className="bg-blue-500 text-white text-xs py-1 px-2 rounded"
+              >
+                Top
+              </button>
+              <button
+                onClick={() => handleCameraPreset('side')}
+                className="bg-blue-500 text-white text-xs py-1 px-2 rounded"
+              >
+                Side
+              </button>
+              <button
+                onClick={() => handleCameraPreset('front')}
+                className="bg-blue-500 text-white text-xs py-1 px-2 rounded"
+              >
+                Front
+              </button>
+              <button
+                onClick={handleFitToContainer}
+                className="bg-green-500 text-white text-xs py-1 px-2 rounded col-span-2"
+              >
+                Fit to Container
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Existing controls */}
         <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
           <button 
             onClick={() => setColorBy(prev => prev === 'material' ? 'assembly' : 'material')}
@@ -63,25 +121,25 @@ const ThreeDView = () => {
             {showSlots ? 'Hide Slots' : 'Show Slots'}
           </button>
           
-          
           {/* Debug info display */}
           <div className="mt-2 bg-white bg-opacity-80 p-2 rounded text-xs">
             <p><strong>Solution:</strong> {solution ? 'Yes' : 'No'}</p>
             <p><strong>Total Parts:</strong> {packedParts.length}</p>
-            <p><strong>Active Container:</strong> {activeContainerIndex}</p>
-            <p><strong>Container Parts:</strong> {packedParts.filter(p => p.bin_id === activeContainerIndex).length}</p>
+            <p><strong>Active Container:</strong> {activeBinIndex}</p>
+            <p><strong>Container Parts:</strong> {packedParts.filter(p => p.bin_id === activeBinIndex).length}</p>
           </div>
         </div>
         
-        {/* Container selection menu - now driven by containerCount */}
+        {/* Container selection menu */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 flex items-center gap-1 bg-white bg-opacity-75 px-3 py-2 rounded shadow-lg">
           <span className="text-sm mr-2">Container:</span>
-          {Array.from({ length: containerCount }, (_, i) => (
+          {/* Container selection buttons (unchanged) */}
+          {Array.from({ length: binCount }, (_, i) => (
             <button
               key={i}
-              onClick={() => setActiveContainerIndex(i)}
+              onClick={() => setActiveBinIndex(i)}
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm
-                ${activeContainerIndex === i 
+                ${activeBinIndex === i 
                   ? 'bg-blue-600 text-white' 
                   : binsWithParts.includes(i)
                     ? 'bg-green-100 hover:bg-blue-200'
@@ -93,13 +151,13 @@ const ThreeDView = () => {
             </button>
           ))}
           
-          {containerCount > 10 && (
-            <span className="text-xs italic ml-2">+{containerCount - 10} more</span>
+          {binCount > 10 && (
+            <span className="text-xs italic ml-2">+{binCount - 10} more</span>
           )}
           
-          {containerCount > 1 && (
+          {binCount > 1 && (
             <button 
-              onClick={() => setActiveContainerIndex((prev) => (prev + 1) % containerCount)}
+              onClick={() => setActiveBinIndex((prev) => (prev + 1) % binCount)}
               className="ml-3 bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center"
               title="Next container"
             >
@@ -112,33 +170,43 @@ const ThreeDView = () => {
         
         <Canvas 
           camera={{ 
-            position: [1000, 600, 1000], 
-            far: 10000,
+            position: [2000, 1500, 2000],
+            far: 20000,
+            fov: 45,
+            near: 100,
           }}
         >
           <ambientLight intensity={0.5} />
           <pointLight position={[500, 500, 500]} intensity={0.8} />
           <pointLight position={[-500, -500, -500]} intensity={0.2} />
-          <OrbitControls/>
           
-          <group rotation={[-Math.PI / 6, Math.PI / 6, 0]}>
+          {/* Our camera controller component */}
+          <CameraController containerSize={containerSize} />
+          
+          <group rotation={[0, 0, 0]} ref={containerRef}>
             <OptimizedContainer
-              containerCount={containerCount}
+              containerCount={binCount}
               packedParts={packedParts}
               colorBy={colorBy}
               showSlots={showSlots}
-              activeContainerIndex={activeContainerIndex}
+              activeContainerIndex={activeBinIndex}
             />
             <Text position={[1100, 0, 0]} color="red" fontSize={50}>X</Text>
             <Text position={[0, 1100, 0]} color="green" fontSize={50}>Y</Text>
             <Text position={[0, 0, 1100]} color="blue" fontSize={50}>Z</Text>
+            
+            {/* Add a ground grid */}
+            <gridHelper 
+              args={[5000, 50]}
+              position={[500, -10, 500]}
+            />
           </group>
         </Canvas>
       </div>
     );
   }
   
-  // Otherwise, show a placeholder container
+  // Placeholder container (unchanged)
   return (
     <div className="relative w-full h-full">
       <Canvas camera={{ position: [2, 2, 5], fov: 50 }}>
@@ -147,7 +215,6 @@ const ThreeDView = () => {
         <directionalLight position={[-5, 5, 5]} intensity={0.5} />
         <OrbitControls />
         
-        {/* Default container box when no JSON is loaded */}
         <Box args={[2, 1.5, 1]} position={[0, 0, 0]}>
           <meshStandardMaterial 
             attach="material" 
@@ -168,9 +235,7 @@ const ThreeDView = () => {
           Upload a container JSON file to get started
         </Text>
         
-        {/* Grid helper for better spatial orientation */}
         <gridHelper args={[10, 10]} />
-        <axesHelper args={[5]} />
       </Canvas>
     </div>
   );
