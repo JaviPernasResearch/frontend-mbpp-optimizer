@@ -2,12 +2,12 @@ import React from 'react';
 import { useAtom } from 'jotai';
 import { useOptimizationSettings } from '../../hooks/useOptimizationSettings';
 import { OptimizationSettings } from '@/types/optimization';
-import { containerCountState } from '@/states/containerCountState';
+import { binCountState } from '@/states/binCountState';
 
 const OptimizationSettingsMenu: React.FC = () => {
 
   const { settings, setSettings } = useOptimizationSettings();
-  const [containerCount] = useAtom(containerCountState);
+  const [containerCount] = useAtom(binCountState);
 
   // Handle approach change
   const handleApproachChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

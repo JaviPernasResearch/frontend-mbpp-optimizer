@@ -3,17 +3,17 @@ import { toast } from 'react-toastify';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
 import { Bin, Part } from '@/types/BinTypes';
-import { createContainerCopies, sendBinToBackend } from '@/services/BinLoaderService';
+import { createContainerCopies } from '@/services/BinLoaderService';
 import { OptimizationObjective, OptimizationRequest, OptimizationSettings, OptimizationSolution } from '@/types/optimization';
-import { containerCountState } from '@/states/containerCountState';
+import { binCountState } from '@/states/binCountState';
 import { partsDataState } from '@/states/partsDataState';
-import { Console } from 'console';
+import { solutionDataState } from '@/states/solutionDataState';
 
 export function useOptimizationApi() {
   const [binData] = useAtom(binDataState);
   const [partsData] = useAtom(partsDataState);
-  const [containerCount] = useAtom(containerCountState);
-  const [solution, setSolution] = useState<OptimizationSolution | null>(null);
+  const [containerCount] = useAtom(binCountState);
+  const [solution, setSolution] = useAtom(solutionDataState)
   const [isOptimizing, setIsOptimizing] = useState(false);
   
   // Create sample parts for demonstration

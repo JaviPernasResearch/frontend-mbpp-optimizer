@@ -4,22 +4,22 @@ import React from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FoldablePanel from '../UI/FoldablePanel';
-import ContainerConfig from '../UI/ContainerConfig';
+import BinConfig from '../UI/BinConfigPanel';
 import OptimizationSettings from '../UI/OptimizationSettingsMenu';
 import OptimizationButton from '../UI/OptimizationButton';
-import { useContainerConfig } from '../../hooks/useContainerConfig';
+import { useBinConfig } from '../../hooks/useBinConfig';
 import { useOptimizationSettings } from '@/hooks/useOptimizationSettings';
 import { useOptimizationApi } from '@/hooks/useOptimizationApi';
 
 const SettingsMenu = () => {
   const { 
-    isContainerConfigOpen, 
+    isBinConfigOpen, 
     isOptimizationSettingsOpen, 
     binData,
     partsData,
-    toggleContainerConfig, 
+    toggleBinConfig, 
     toggleOptimizationSettings,
-  } = useContainerConfig();
+  } = useBinConfig();
   
   // Access optimization settings from a context or state
   const { settings } = useOptimizationSettings();
@@ -74,10 +74,10 @@ const SettingsMenu = () => {
         {/* Container Configuration */}
         <FoldablePanel 
           title="Container Configuration" 
-          isOpen={isContainerConfigOpen}
-          onToggle={toggleContainerConfig}
+          isOpen={isBinConfigOpen}
+          onToggle={toggleBinConfig}
         >
-          <ContainerConfig />
+          <BinConfig />
         </FoldablePanel>
         
         {/* Optimization Settings */}

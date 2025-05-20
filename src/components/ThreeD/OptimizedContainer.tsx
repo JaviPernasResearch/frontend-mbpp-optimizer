@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Text, Grid, Html } from '@react-three/drei';
+import React from 'react';
+import { Box, Text } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
 import { Bin, Module as ModuleType, PackedPart} from '../../types/BinTypes';

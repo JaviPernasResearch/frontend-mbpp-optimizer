@@ -1,25 +1,25 @@
 import React from 'react';
-import { useContainerConfig } from '../../hooks/useContainerConfig';
+import { useBinConfig } from '../../hooks/useBinConfig';
 
-const ContainerConfig = () => {
+const BinConfig = () => {
   const {
-    fileName,
+    binFileName,
     partsFileName,
-    isLoading,
+    isLoadingBin,
     isLoadingParts,
-    fileInputRef,
+    binFileInputRef,
     partsFileInputRef,
     binData,
     partsData,
-    containerCount,
-    setContainerCount,
-    handleFileChange,
+    BinCount,
+    handleBinCountChange,
+    handleBinFileChange,
     handlePartsFileChange,
-    triggerFileInput,
+    triggerBinFileInput,
     triggerPartsFileInput,
-    removeFile,
+    removeBinFile,
     removePartsFile,
-  } = useContainerConfig();
+  } = useBinConfig();
 
   return (
     <div className="p-4 space-y-4">
@@ -32,15 +32,15 @@ const ContainerConfig = () => {
             type="file"
             accept=".json"
             className="hidden"
-            ref={fileInputRef}
-            onChange={handleFileChange}
+            ref={binFileInputRef}
+            onChange={handleBinFileChange}
           />
           
-          {!fileName && !isLoading && (
+          {!binFileName && !isLoadingBin && (
             <button
-              onClick={triggerFileInput}
+              onClick={triggerBinFileInput}
               className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 flex items-center justify-center"
-              disabled={isLoading}
+              disabled={isLoadingBin}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -49,7 +49,7 @@ const ContainerConfig = () => {
             </button>
           )}
           
-          {isLoading && (
+          {isLoadingBin && (
             <div className="bg-blue-100 text-blue-700 py-2 px-4 rounded flex items-center justify-center">
               <svg className="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -59,7 +59,7 @@ const ContainerConfig = () => {
             </div>
           )}
           
-          {fileName && !isLoading && (
+          {binFileName && !isLoadingBin && (
             <div className="border rounded p-2 bg-white">
               <div className="flex items-center justify-between">
                 <div className="flex items-center text-sm text-gray-700">
@@ -67,18 +67,18 @@ const ContainerConfig = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   <span className="truncate max-w-[180px]">
-                    {binData ? `IMOS Container (ID: ${binData.id})` : fileName}
+                    {binData ? `Container ID: ${binData.id})` : binFileName}
                   </span>
                 </div>
                 <div className="flex space-x-2">
                   <button 
-                    onClick={triggerFileInput}
+                    onClick={triggerBinFileInput}
                     className="text-xs text-blue-600 hover:text-blue-800"
                   >
                     Change
                   </button>
                   <button 
-                    onClick={removeFile}
+                    onClick={removeBinFile}
                     className="text-xs text-red-600 hover:text-red-800"
                   >
                     Remove
@@ -171,8 +171,8 @@ const ContainerConfig = () => {
           <input 
             type="number" 
             id="containerCount" 
-            value={containerCount}
-            onChange={(e) => setContainerCount(Math.max(1, parseInt(e.target.value) || 1))}
+            value={BinCount}
+            onChange={(e) => handleBinCountChange(Math.max(1, parseInt(e.target.value) || 1))}
             min="1"
             max="10"
             className="border rounded p-1 w-full" 
@@ -186,4 +186,4 @@ const ContainerConfig = () => {
   );
 };
 
-export default ContainerConfig;
+export default BinConfig;

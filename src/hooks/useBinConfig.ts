@@ -3,28 +3,33 @@ import { useAtom } from 'jotai';
 import { toast } from 'react-toastify';
 import { binDataState } from '@/states/binDataState';
 import { partsDataState } from '@/states/partsDataState';
-import { containerCountState } from '@/states/containerCountState';
+import { binCountState } from '@/states/binCountState';
 import { loadBinFromFile, loadPartsFromFile } from '@/services/BinLoaderService';
+import { solutionDataState } from '@/states/solutionDataState';
 
-export function useContainerConfig() {
-  const [isContainerConfigOpen, setContainerConfigOpen] = useState(true);
+export function useBinConfig() {
+  const [isBinConfigOpen, setBinConfigOpen] = useState(true);
   const [isOptimizationSettingsOpen, setOptimizationSettingsOpen] = useState(false);
-  const [binFileName, setFileName] = useState<string | null>(null);
+  const [binFileName, setBinFileName] = useState<string | null>(null);
   const [partsFileName, setPartsFileName] = useState<string | null>(null);
   const [binData, setBinData] = useAtom(binDataState);
   const [partsData, setPartsData] = useAtom(partsDataState);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingBin, setIsLoadingBin] = useState(false);
   const [isLoadingParts, setIsLoadingParts] = useState(false);
-  const [containerCount, setContainerCount] = useAtom(containerCountState);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [BinCount, setBinCount] = useAtom(binCountState);
+  const binFileInputRef = useRef<HTMLInputElement>(null);
   const partsFileInputRef = useRef<HTMLInputElement>(null);
-
+  const [solution, setSolution] = useAtom(solutionDataState)
+  
   // This effect ensures fileName is always in sync with binData
   useEffect(() => {
     if (binData && !binFileName) {
-      setFileName(`Container (ID: ${binData.id})`);
+      setBinFileName(`Container (ID: ${binData.id})`);
+      if(solution){
+        setSolution(null);
+      }
     } else if (!binData && binFileName) {
-      setFileName(null);
+      setBinFileName(null);
     }
   }, [binData, binFileName]);
 
@@ -32,6 +37,9 @@ export function useContainerConfig() {
     useEffect(() => {
     if (partsData && !partsFileName) {
       setPartsFileName(`Parts (ID: ${partsData.map(part => part.guid).join(', ')})`);
+      if(solution){
+        setSolution(null);
+      }
     } else if (!partsData && partsFileName) {
       setPartsFileName(null);
     }
@@ -39,21 +47,24 @@ export function useContainerConfig() {
 
 
   // Limit container count to 10
-  const handleContainerCountChange = (count: number) => {
-    setContainerCount(Math.min(Math.max(1, count), 10));
+  const handleBinCountChange = (count: number) => {
+    setBinCount(Math.min(Math.max(1, count), 10));
+    if(solution){
+        setSolution(null);
+      }
   };
 
-  const toggleContainerConfig = () => {
+  const toggleBinConfig = () => {
     setOptimizationSettingsOpen(false);
-    setContainerConfigOpen(!isContainerConfigOpen);
+    setBinConfigOpen(!isBinConfigOpen);
   };
 
   const toggleOptimizationSettings = () => {
-    setContainerConfigOpen(false);
+    setBinConfigOpen(false);
     setOptimizationSettingsOpen(!isOptimizationSettingsOpen);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBinFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       
@@ -61,7 +72,7 @@ export function useContainerConfig() {
         handleJsonFile(file);
       } else {
         toast.error('Please upload a valid JSON file.');
-        clearFileInput();
+        clearBinFileInput();
       }
     }
   };
@@ -80,20 +91,20 @@ export function useContainerConfig() {
   };
 
   const handleJsonFile = async (file: File) => {
-    setIsLoading(true);
+    setIsLoadingBin(true);
     
     try {
       const bin = await loadBinFromFile(file);
       
-      setFileName(file.name);
+      setBinFileName(file.name);
       setBinData(bin);
       toast.success('Container file loaded successfully!');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error loading file';
       toast.error(errorMessage);
-      clearFileInput();
+      clearBinFileInput();
     } finally {
-      setIsLoading(false);
+      setIsLoadingBin(false);
     }
   };
 
@@ -115,9 +126,9 @@ export function useContainerConfig() {
     }
   };
 
-  const clearFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+  const clearBinFileInput = () => {
+    if (binFileInputRef.current) {
+      binFileInputRef.current.value = '';
     }
   };
 
@@ -127,9 +138,9 @@ export function useContainerConfig() {
     }
   };
 
-  const triggerFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
+  const triggerBinFileInput = () => {
+    if (binFileInputRef.current) {
+      binFileInputRef.current.click();
     }
   };
   
@@ -139,10 +150,10 @@ export function useContainerConfig() {
     }
   };
   
-  const removeFile = () => {
-    setFileName(null);
+  const removeBinFile = () => {
+    setBinFileName(null);
     setBinData(null);
-    clearFileInput();
+    clearBinFileInput();
   };
   
   const removePartsFile = () => {
@@ -152,25 +163,25 @@ export function useContainerConfig() {
   };
 
   return {
-    isContainerConfigOpen,
+    isBinConfigOpen,
     isOptimizationSettingsOpen,
-    fileName: binFileName,
+    binFileName,
     partsFileName,
     binData,
     partsData,
-    isLoading,
+    isLoadingBin,
     isLoadingParts,
-    containerCount,
-    setContainerCount: handleContainerCountChange,
-    fileInputRef,
+    BinCount,
+    handleBinCountChange,
+    binFileInputRef,
     partsFileInputRef,
-    toggleContainerConfig,
+    toggleBinConfig,
     toggleOptimizationSettings,
-    handleFileChange,
+    handleBinFileChange,
     handlePartsFileChange,
-    triggerFileInput,
+    triggerBinFileInput,
     triggerPartsFileInput,
-    removeFile,
+    removeBinFile,
     removePartsFile,
   };
 }

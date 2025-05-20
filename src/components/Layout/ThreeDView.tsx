@@ -5,14 +5,14 @@ import { useState, useEffect } from 'react';
 import { OrbitControls, Box, Text } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
-import { containerCountState } from '@/states/containerCountState'; 
+import { binCountState } from '@/states/binCountState'; 
 import { useOptimizationApi } from '@/hooks/useOptimizationApi';
 import OptimizedContainer from '../ThreeD/OptimizedContainer';
 import { toast } from 'react-toastify';
 
 const ThreeDView = () => {
   // Use the shared container count atom
-  const [containerCount] = useAtom(containerCountState);
+  const [containerCount] = useAtom(binCountState);
   const [binData] = useAtom(binDataState);
   const { solution, isOptimizing, runOptimization } = useOptimizationApi();
   const [colorBy, setColorBy] = useState<'material' | 'assembly'>('material');
@@ -43,19 +43,7 @@ const ThreeDView = () => {
   // Determine which containers have parts in them
   const binsWithParts = solution?.bins_used || 
     (binData ? Array.from({ length: containerCount }, (_, i) => i) : []);
-    
-  // Create a runOptimizationDemo function for testing
-  const runOptimizationDemo = async () => {
-    const result = await runOptimization({
-      optimizationApproach: 'constraint-programming',
-      groupSameOrderComponents: true,
-      groupSameMaterialComponents: true,
-      minimizeSpaceWaste: true
-    });
-    
-    console.log("Optimization demo completed with result:", result);
-  };
-  
+      
   // If binData is loaded, render the container model
   if (binData) {
     return (
@@ -75,14 +63,6 @@ const ThreeDView = () => {
             {showSlots ? 'Hide Slots' : 'Show Slots'}
           </button>
           
-          {/* Test button to run optimization directly */}
-          <button 
-            onClick={runOptimizationDemo}
-            disabled={isOptimizing}
-            className="bg-blue-500 text-white py-1 px-3 rounded shadow-md transition-all disabled:opacity-50"
-          >
-            {isOptimizing ? 'Optimizing...' : 'Run Demo Optimization'}
-          </button>
           
           {/* Debug info display */}
           <div className="mt-2 bg-white bg-opacity-80 p-2 rounded text-xs">
