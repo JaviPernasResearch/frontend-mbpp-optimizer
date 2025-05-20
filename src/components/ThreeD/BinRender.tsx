@@ -3,14 +3,13 @@ import { Box, Text } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
 import { Bin, Module as ModuleType, PackedPart} from '../../types/BinTypes';
-import * as THREE from 'three';
 
-interface OptimizedContainerProps {
-  containerCount: number;
+interface BinRenderProps {
+  binCount: number;
   packedParts?: PackedPart[];
   colorBy?: 'material' | 'assembly';
   showSlots?: boolean;
-  activeContainerIndex?: number;
+  activeBinIndex?: number;
 }
 
 const PartColors: Record<string, string> = {
@@ -100,13 +99,13 @@ const Module: React.FC<{
   );
 };
 
-const ContainerGroundLabel: React.FC<{
-  containerId: number,
+const BinGroundLabel: React.FC<{
+  binId: number,
   dimensions: { width: number, height: number, depth: number }
-}> = ({ containerId, dimensions }) => {
+}> = ({ binId: binId, dimensions }) => {
   return (
     <group>
-      {/* Container number text on the ground */}
+      {/* Bin number text on the ground */}
       <Text
         position={[dimensions.width/2, 5, 200]} // Positioned in front of container on the ground
         rotation={[-Math.PI/2, 0, 0]} // Rotate to lie flat on the ground
@@ -117,7 +116,7 @@ const ContainerGroundLabel: React.FC<{
         renderOrder={1} // Ensure text renders above grid
         maxWidth={dimensions.width * 0.8}
       >
-        Container {containerId}
+        Container {binId}
       </Text>
       
       {/* Optional: Add a transparent background plate for better visibility */}
@@ -138,10 +137,10 @@ const ThreeDBin: React.FC<{
   parts: PackedPart[],
   colorBy: 'material' | 'assembly',
   showSlots: boolean,
-  containerId: number
-}> = ({ bin, position, parts, colorBy, showSlots, containerId }) => {
-  // Calculate container dimensions from all modules
-  const getContainerDimensions = () => {
+  binId: number
+}> = ({ bin, position, parts, colorBy, showSlots, binId }) => {
+  // Calculate Bin dimensions from all modules
+  const getBinDimensions = () => {
     let maxX = 0, maxY = 0, maxZ = 0;
     
     bin.modules.forEach(module => {
@@ -159,13 +158,13 @@ const ThreeDBin: React.FC<{
     return { width: maxX, height: maxY, depth: maxZ };
   };
   
-  const dimensions = getContainerDimensions();
+  const dimensions = getBinDimensions();
   
   return (
     <group position={position} rotation={[0, 0, 0]}>
-      {/* Container ground label instead of sign post */}
-      <ContainerGroundLabel 
-        containerId={containerId}
+      {/* Bin ground label instead of sign post */}
+      <BinGroundLabel 
+        binId={binId}
         dimensions={dimensions} 
       />
       
@@ -226,12 +225,12 @@ const ThreeDBin: React.FC<{
   );
 };
 
-const OptimizedContainer: React.FC<OptimizedContainerProps> = ({ 
-  containerCount, 
+const BinRender: React.FC<BinRenderProps> = ({ 
+  binCount, 
   packedParts = [], 
   colorBy = 'material',
   showSlots = true,
-  activeContainerIndex = 0
+  activeBinIndex = 0
 }) => {
   // Use binData from Jotai
   const [binData] = useAtom(binDataState);
@@ -241,13 +240,13 @@ const OptimizedContainer: React.FC<OptimizedContainerProps> = ({
     return null; // Return nothing if no bin data is available
   }
   
-  // Filter parts by container/bin ID
-  const partsByBin = Array.from({ length: containerCount }, (_, i) => 
+  // Filter parts by bin ID
+  const partsByBin = Array.from({ length: binCount }, (_, i) => 
     packedParts.filter(part => part.bin_id === i)
   );
   
   // Calculate container dimensions for axis positioning
-  const getContainerDimensions = () => {
+  const getBinDimensions = () => {
     let maxX = 0, maxY = 0, maxZ = 0;
     
     binData.modules.forEach(module => {
@@ -265,41 +264,32 @@ const OptimizedContainer: React.FC<OptimizedContainerProps> = ({
     return { width: maxX, height: maxY, depth: maxZ };
   };
   
-  const dimensions = getContainerDimensions();
+  const dimensions = getBinDimensions();
   
   return (
     <group>
-      {/* Axes helper at the origin */}
-      <primitive object={new THREE.AxesHelper(1000)} />
       
-      {/* Add a more visible grid to show the ground plane */}
-      <gridHelper 
-        args={[dimensions.width * 2, 10, '#444444', '#888888']} 
-        position={[dimensions.width/2, 0, dimensions.depth/2]}
-        rotation={[0, 0, 0]}
-      />
-      
-      {/* Add a colored ground plane for even better visibility */}
+      {/* Add a colored ground plane for even better visibility
       <mesh 
         position={[dimensions.width/2, -1, dimensions.depth/2]} 
         rotation={[-Math.PI/2, 0, 0]}
       >
         <planeGeometry args={[dimensions.width * 2, dimensions.depth * 2]} />
         <meshBasicMaterial color="#f0f0f0" transparent opacity={0.3} side={THREE.DoubleSide} />
-      </mesh>
+      </mesh> */}
       
       {/* Only render the active container, positioned in front of the axes */}
       <ThreeDBin 
-        key={activeContainerIndex}
+        key={activeBinIndex}
         bin={binData}
         position={[0, 0, dimensions.depth]}  // Keep the container at origin
-        parts={partsByBin[activeContainerIndex] || []}
+        parts={partsByBin[activeBinIndex] || []}
         colorBy={colorBy}
         showSlots={showSlots}
-        containerId={activeContainerIndex}
+        binId={activeBinIndex}
       />
     </group>
   );
 };
 
-export default OptimizedContainer;
+export default BinRender;

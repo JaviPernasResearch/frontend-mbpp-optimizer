@@ -7,11 +7,11 @@ import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
 import { binCountState } from '@/states/binCountState'; 
 import { useOptimizationApi } from '@/hooks/useOptimizationApi';
-import OptimizedContainer from '../ThreeD/OptimizedContainer';
+import BinRender from '../ThreeD/BinRender';
 import CameraController from '../ThreeD/CameraController';
 import { toast } from 'react-toastify';
 import { cameraManager } from '@/utils/cameraManager';
-import { Object3D, } from 'three';
+import { AxesHelper, Object3D, } from 'three';
 import { OrbitControls } from '@react-three/drei';
 
 const ThreeDView = () => {
@@ -184,12 +184,12 @@ const ThreeDView = () => {
           <CameraController containerSize={containerSize} />
           
           <group rotation={[0, 0, 0]} ref={containerRef}>
-            <OptimizedContainer
-              containerCount={binCount}
+            <BinRender
+              binCount={binCount}
               packedParts={packedParts}
               colorBy={colorBy}
               showSlots={showSlots}
-              activeContainerIndex={activeBinIndex}
+              activeBinIndex={activeBinIndex}
             />
             <Text position={[1100, 0, 0]} color="red" fontSize={50}>X</Text>
             <Text position={[0, 1100, 0]} color="green" fontSize={50}>Y</Text>
@@ -200,6 +200,8 @@ const ThreeDView = () => {
               args={[5000, 50]}
               position={[500, -10, 500]}
             />
+            {/* Axes helper at the origin */}
+            <primitive object={new AxesHelper(5000)} />
           </group>
         </Canvas>
       </div>
