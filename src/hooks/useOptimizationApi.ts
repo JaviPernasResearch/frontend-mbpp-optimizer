@@ -7,6 +7,7 @@ import { createContainerCopies, sendBinToBackend } from '@/services/BinLoaderSer
 import { OptimizationObjective, OptimizationRequest, OptimizationSettings, OptimizationSolution } from '@/types/optimization';
 import { containerCountState } from '@/states/containerCountState';
 import { partsDataState } from '@/states/partsDataState';
+import { Console } from 'console';
 
 export function useOptimizationApi() {
   const [binData] = useAtom(binDataState);
@@ -65,12 +66,12 @@ export function useOptimizationApi() {
     try {
       // Create the bins from JSON data using our helper function
       const bins: Bin[] = createContainerCopies(binData, containerCount);
-      
+
       // Use uploaded parts if available, otherwise create sample parts
       const parts = partsData || createSampleParts();
       
       console.log(`Using ${parts.length} parts (${partsData ? 'from uploaded file' : 'sample parts'})`);
-      
+
       // Build objectives based on settings
       const objectives: OptimizationObjective[] = [];
       
@@ -105,6 +106,9 @@ export function useOptimizationApi() {
         timeout_seconds: 60
       };
       
+      // Print OptimizationRequest object in terminal
+      console.log("Optimization Request:", JSON.stringify(requestBody, null, 2));
+
       // Make API call
       toast.info('Starting optimization...');
       console.log("Sending optimization request:", requestBody);
