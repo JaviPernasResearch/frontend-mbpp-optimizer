@@ -26,6 +26,9 @@ const ThreeDView = () => {
   const [showAxes, setShowAxes] = useState<boolean>(true);
   const [activeBinIndex, setActiveBinIndex] = useState<number>(0);
   
+  // Track if user has manually selected a bin
+  const [userSelectedBin, setUserSelectedBin] = useState<boolean>(false);
+  
   // Reference to the container group for camera fitting
   const containerRef = useRef<Object3D>(new Object3D());
   
@@ -38,14 +41,23 @@ const ThreeDView = () => {
       console.log("Solution loaded in ThreeDView:", solution);
       console.log("Parts to render:", packedParts.length);
       
-      if (packedParts.length > 0 && solution.bins_used?.length > 0) {
-        if (!solution.bins_used.includes(activeBinIndex)) {
+      // Only auto-switch bins on initial solution load, not when user has selected bins manually
+      if (packedParts.length > 0 && solution.bins_used?.length > 0 && !userSelectedBin) {
+        // Only switch if current bin has no parts
+        const currentBinHasParts = solution.bins_used.includes(activeBinIndex);
+        if (!currentBinHasParts) {
           setActiveBinIndex(solution.bins_used[0]);
           toast.info(`Switching to container ${solution.bins_used[0]} with packed parts`);
         }
       }
     }
-  }, [solution, activeBinIndex, packedParts]);
+  }, [solution, packedParts, activeBinIndex, userSelectedBin]);
+  
+  // Custom bin setter that tracks user selection
+  const handleBinChange = (binIndex: number) => {
+    setActiveBinIndex(binIndex);
+    setUserSelectedBin(true);
+  };
   
   // Determine which containers have parts in them
   const binsWithParts = solution?.bins_used || 
@@ -85,7 +97,7 @@ const ThreeDView = () => {
           <BinSelector
             binCount={binCount}
             activeBinIndex={activeBinIndex}
-            setActiveBinIndex={setActiveBinIndex}
+            setActiveBinIndex={handleBinChange}
             binsWithParts={binsWithParts}
             packedParts={packedParts}
           />
