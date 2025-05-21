@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Box, Text } from '@react-three/drei';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
@@ -26,6 +26,11 @@ const ThreeDView = () => {
   // Add state for grid visibility
   const [showGrid, setShowGrid] = useState<boolean>(true);
   const [showAxes, setShowAxes] = useState<boolean>(true);
+  
+  // Create a memoized callback for toggling color mode
+  const toggleColorMode = useCallback(() => {
+    setColorBy(prev => prev === 'material' ? 'assembly' : 'material');
+  }, []);
   
   // Get packed parts from solution if available
   const packedParts = solution?.packed_parts || [];
@@ -113,7 +118,7 @@ const ThreeDView = () => {
         {/* Existing controls */}
         <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
           <button 
-            onClick={() => setColorBy(prev => prev === 'material' ? 'assembly' : 'material')}
+            onClick={toggleColorMode} // Use the memoized callback
             className="bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 py-1 px-3 rounded shadow-md transition-all"
           >
             Color by: {colorBy === 'material' ? 'Material' : 'Assembly'}
@@ -195,6 +200,7 @@ const ThreeDView = () => {
             fov: 45,
             near: 100,
           }}
+          key="main-canvas" // Add a key to preserve the Canvas instance
         >
           <ambientLight intensity={0.5} />
           <pointLight position={[500, 500, 500]} intensity={0.8} />
