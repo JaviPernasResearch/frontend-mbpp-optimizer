@@ -154,12 +154,22 @@ export function useBinConfig() {
     setBinFileName(null);
     setBinData(null);
     clearBinFileInput();
+    
+    // Clear solution with timeout to ensure it happens after render
+    setTimeout(() => {
+      setSolution(null);
+    }, 0);
   };
   
   const removePartsFile = () => {
     setPartsFileName(null);
     setPartsData(null);
     clearPartsFileInput();
+    
+    // Clear solution with timeout to ensure it happens after render
+    setTimeout(() => {
+      setSolution(null);
+    }, 0);
   };
 
   return {

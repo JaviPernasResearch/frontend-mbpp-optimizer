@@ -5,6 +5,7 @@ import { partsDataState } from '@/states/partsDataState';
 import { PackedPart } from '../../types/types';
 import BinInstance from './containers/BinInstance';
 import { getBinDimensions, getPlacedPartPositioning } from './utils/dimensionUtils';
+import { solutionDataState } from '@/states/solutionDataState';
 
 interface BinSceneProps {
   binCount: number;
@@ -23,10 +24,16 @@ const BinScene: React.FC<BinSceneProps> = ({
 }) => {
   const [binData] = useAtom(binDataState);
   const [partsData] = useAtom(partsDataState);
+  const [solution] = useAtom(solutionDataState);
   
   useEffect(() => {
     // Log information about packed parts if we have any
-    if (packedParts.length > 0) {
+    // Only use packed parts if we have a solution and parts data
+    const validPackedParts = solution && partsData && partsData.length > 0 
+    ? packedParts 
+    : [];
+    
+    if (validPackedParts.length > 0) {
       const currentBinParts = packedParts.filter(part => part.bin_id === activeBinIndex);
       console.log(`Found ${currentBinParts.length} packed parts for bin ${activeBinIndex}`);
       

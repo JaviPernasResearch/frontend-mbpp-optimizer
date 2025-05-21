@@ -4,6 +4,8 @@ import BinGroundLabel from '../components/BinGroundLabel';
 import BinModule from '../components/BinModule';
 import { PlacedPart } from '../components/PlacedPart';
 import { getBinDimensions, getSlotPositioning, getPlacedPartPositioning } from '../utils/dimensionUtils';
+import { solutionDataState } from '@/states/solutionDataState';
+import { useAtom } from 'jotai';
 
 interface BinInstanceProps {
   bin: Bin;
@@ -24,7 +26,7 @@ const BinInstance: React.FC<BinInstanceProps> = ({
   binId, 
   allParts 
 }) => {
-    
+  const [solution] = useAtom(solutionDataState);
   const dimensions = getBinDimensions(bin);
   
   useEffect(() => {
@@ -48,7 +50,9 @@ const BinInstance: React.FC<BinInstanceProps> = ({
         />
       ))}
       
-      {parts.map((packedPart) => {
+        {/* Only render parts if solution is available and parts exist */}
+        {solution && parts.length > 0 && allParts && allParts.length > 0 && 
+        parts.map((packedPart)  => {
         try {
           const originalPart = allParts.find(p => p.guid === packedPart.part_guid);
           
