@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
 import { partsDataState } from '@/states/partsDataState';
-import { PackedPart } from '../../types/types';
-import BinInstance from './containers/BinInstance';
-import { getBinDimensions, getPlacedPartPositioning } from './utils/dimensionUtils';
+import { PackedPart } from '../../../types/types';
+import BinInstance from '../containers/BinInstance';
+import { getBinDimensions, getPlacedPartPositioning } from '../utils/dimensionUtils';
 import { solutionDataState } from '@/states/solutionDataState';
 
 interface BinSceneProps {

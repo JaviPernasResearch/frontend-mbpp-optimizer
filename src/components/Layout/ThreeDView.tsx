@@ -1,42 +1,35 @@
 'use client';
 
-import { Canvas } from '@react-three/fiber';
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Box, Text } from '@react-three/drei';
+import { useState, useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
+import { Object3D } from 'three';
+import { toast } from 'react-toastify';
 import { binDataState } from '@/states/binDataState';
 import { binCountState } from '@/states/binCountState'; 
 import { useOptimizationApi } from '@/hooks/useOptimizationApi';
-import BinScene from '../ThreeD/BinScene';
-import CameraController from '../ThreeD/CameraController';
-import { toast } from 'react-toastify';
-import { cameraManager } from '@/utils/cameraManager';
-import { AxesHelper, Object3D, } from 'three';
-import { OrbitControls } from '@react-three/drei';
+import ThreeDViewport from '../ThreeD/viewport/ThreeDViewport';
+import CameraControls from '../ThreeD/controls/CameraControls';
+import BinSelector from '../ThreeD/controls/BinSelector';
+import ViewControls from '../ThreeD/controls/ViewControls';
+import PlaceholderView from '../ThreeD/viewport/PlaceholderView';
+import DebugPanel from '../ThreeD/utils/DebugPanel';
 
 const ThreeDView = () => {
-  // Existing state
+  // Core state
   const [binCount] = useAtom(binCountState);
   const [binData] = useAtom(binDataState);
   const { solution } = useOptimizationApi();
   const [colorBy, setColorBy] = useState<'material' | 'assembly'>('material');
   const [showSlots, setShowSlots] = useState<boolean>(true);
-  const [activeBinIndex, setActiveBinIndex] = useState<number>(0);
-  
-  // Add state for grid visibility
   const [showGrid, setShowGrid] = useState<boolean>(true);
   const [showAxes, setShowAxes] = useState<boolean>(true);
+  const [activeBinIndex, setActiveBinIndex] = useState<number>(0);
   
-  // Create a memoized callback for toggling color mode
-  const toggleColorMode = useCallback(() => {
-    setColorBy(prev => prev === 'material' ? 'assembly' : 'material');
-  }, []);
+  // Reference to the container group for camera fitting
+  const containerRef = useRef<Object3D>(new Object3D());
   
   // Get packed parts from solution if available
   const packedParts = solution?.packed_parts || [];
-  
-  // Reference to the container group for camera fitting
-  const containerRef = useRef<Object3D>(null);
   
   // Effect to observe solution changes
   useEffect(() => {
@@ -59,215 +52,60 @@ const ThreeDView = () => {
   
   // Get container size for camera target
   const containerSize = binData?.size || { X: 1000, Y: 600, Z: 1000 };
-  
-  // Camera preset handlers
-  const handleCameraPreset = (preset: 'isometric' | 'top' | 'side' | 'front') => {
-    const presets = cameraManager.getPresets();
-    presets[preset]();
-  };
-  
-  const handleFitToContainer = () => {
-    if (containerRef.current) {
-      cameraManager.fitCameraToObject(containerRef.current);
-    }
-  };
-  
+
   // If binData is loaded, render the container model
   if (binData) {
     return (
       <div className="relative w-full h-full">
-        {/* Camera control buttons */}
-        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-          <div className="bg-white bg-opacity-80 p-3 rounded shadow-md">
-            <h3 className="text-sm font-bold mb-2">Camera Views</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => handleCameraPreset('isometric')}
-                className="bg-blue-500 text-white text-xs py-1 px-2 rounded"
-              >
-                Isometric
-              </button>
-              <button
-                onClick={() => handleCameraPreset('top')}
-                className="bg-blue-500 text-white text-xs py-1 px-2 rounded"
-              >
-                Top
-              </button>
-              <button
-                onClick={() => handleCameraPreset('side')}
-                className="bg-blue-500 text-white text-xs py-1 px-2 rounded"
-              >
-                Side
-              </button>
-              <button
-                onClick={() => handleCameraPreset('front')}
-                className="bg-blue-500 text-white text-xs py-1 px-2 rounded"
-              >
-                Front
-              </button>
-              <button
-                onClick={handleFitToContainer}
-                className="bg-green-500 text-white text-xs py-1 px-2 rounded col-span-2"
-              >
-                Fit to Container
-              </button>
-            </div>
-          </div>
-        </div>
+        {/* Camera controls panel */}
+        <CameraControls containerRef={containerRef} />
         
-        {/* Existing controls */}
-        <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
-          <button 
-            onClick={toggleColorMode} // Use the memoized callback
-            className="bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 py-1 px-3 rounded shadow-md transition-all"
-          >
-            Color by: {colorBy === 'material' ? 'Material' : 'Assembly'}
-          </button>
-          <button 
-            onClick={() => setShowSlots(!showSlots)}
-            className="bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 py-1 px-3 rounded shadow-md transition-all"
-          >
-            {showSlots ? 'Hide Slots' : 'Show Slots'}
-          </button>
-          
-          {/* Add grid toggle button */}
-          <button 
-            onClick={() => setShowGrid(!showGrid)}
-            className="bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 py-1 px-3 rounded shadow-md transition-all"
-          >
-            {showGrid ? 'Hide Grid' : 'Show Grid'}
-          </button>
-          
-          {/* Add axes toggle button */}
-          <button 
-            onClick={() => setShowAxes(!showAxes)}
-            className="bg-white bg-opacity-80 hover:bg-opacity-100 text-gray-800 py-1 px-3 rounded shadow-md transition-all"
-          >
-            {showAxes ? 'Hide Axes' : 'Show Axes'}
-          </button>
-          
-          {/* Debug info display */}
-          <div className="mt-2 bg-white bg-opacity-80 p-2 rounded text-xs">
-            <p><strong>Solution:</strong> {solution ? 'Yes' : 'No'}</p>
-            <p><strong>Total Parts:</strong> {packedParts.length}</p>
-            <p><strong>Active Container:</strong> {activeBinIndex}</p>
-            <p><strong>Container Parts:</strong> {packedParts.filter(p => p.bin_id === activeBinIndex).length}</p>
-          </div>
-        </div>
+        {/* View settings panel */}
+        <ViewControls 
+          colorBy={colorBy} 
+          showSlots={showSlots}
+          showGrid={showGrid}
+          showAxes={showAxes}
+          setColorBy={setColorBy}
+          setShowSlots={setShowSlots}
+          setShowGrid={setShowGrid}
+          setShowAxes={setShowAxes}
+        />
         
-        {/* Container selection menu */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 flex items-center gap-1 bg-white bg-opacity-75 px-3 py-2 rounded shadow-lg">
-          <span className="text-sm mr-2">Container:</span>
-          {/* Container selection buttons (unchanged) */}
-          {Array.from({ length: binCount }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveBinIndex(i)}
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm
-                ${activeBinIndex === i 
-                  ? 'bg-blue-600 text-white' 
-                  : binsWithParts.includes(i)
-                    ? 'bg-green-100 hover:bg-blue-200'
-                    : 'bg-gray-100 hover:bg-gray-200'
-                }`}
-              title={`Container ${i}${binsWithParts.includes(i) ? ` (${packedParts.filter(p => p.bin_id === i).length} parts)` : ''}`}
-            >
-              {i}
-            </button>
-          ))}
-          
-          {binCount > 10 && (
-            <span className="text-xs italic ml-2">+{binCount - 10} more</span>
-          )}
-          
-          {binCount > 1 && (
-            <button 
-              onClick={() => setActiveBinIndex((prev) => (prev + 1) % binCount)}
-              className="ml-3 bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center"
-              title="Next container"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
-              </svg>
-            </button>
-          )}
-        </div>
+        {/* Debug information panel */}
+        <DebugPanel 
+          solution={solution}
+          packedParts={packedParts}
+          activeBinIndex={activeBinIndex}
+        />
         
-        <Canvas 
-          camera={{ 
-            position: [2000, 1500, 2000],
-            far: 20000,
-            fov: 45,
-            near: 100,
-          }}
-          key="main-canvas" // Add a key to preserve the Canvas instance
-        >
-          <ambientLight intensity={0.5} />
-          <pointLight position={[500, 500, 500]} intensity={0.8} />
-          <pointLight position={[-500, -500, -500]} intensity={0.2} />
-          
-          {/* Our camera controller component */}
-          <CameraController containerSize={containerSize} />
-          
-          <group rotation={[0, 0, 0]} ref={containerRef}>
-            <BinScene
-              binCount={binCount}
-              packedParts={packedParts}
-              colorBy={colorBy}
-              showSlots={showSlots}
-              activeBinIndex={activeBinIndex}
-            />
-            <Text position={[1100, 0, 0]} color="red" fontSize={50}>X</Text>
-            <Text position={[0, 1100, 0]} color="green" fontSize={50}>Y</Text>
-            <Text position={[0, 0, 1100]} color="blue" fontSize={50}>Z</Text>
-            
-            {/* Add a ground grid - only show if showGrid is true */}
-            {showGrid && (
-              <gridHelper 
-                args={[5000, 50]}
-                position={[500, -10, 500]}
-              />
-            )}
-            
-            {/* Axes helper at the origin - only show if showAxes is true */}
-            {showAxes && (
-              <primitive object={new AxesHelper(5000)} />
-            )}
-          </group>
-        </Canvas>
+        {/* Container selector */}
+        <BinSelector
+          binCount={binCount}
+          activeBinIndex={activeBinIndex}
+          setActiveBinIndex={setActiveBinIndex}
+          binsWithParts={binsWithParts}
+          packedParts={packedParts}
+        />
+        
+        {/* Main 3D viewport */}
+        <ThreeDViewport 
+          containerRef={containerRef}
+          containerSize={containerSize}
+          binCount={binCount}
+          packedParts={packedParts}
+          colorBy={colorBy}
+          showSlots={showSlots}
+          showGrid={showGrid}
+          showAxes={showAxes}
+          activeBinIndex={activeBinIndex}
+        />
       </div>
     );
   }
   
-  // Placeholder container (unchanged)
-  return (
-    <div className="relative w-full h-full">
-      <Canvas camera={{ position: [2, 2, 5], fov: 50 }}>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
-        <directionalLight position={[-5, 5, 5]} intensity={0.5} />
-        <OrbitControls />
-        
-        <Box args={[2, 1.5, 1]} position={[0, 0, 0]}>
-          <meshStandardMaterial 
-            attach="material" 
-            color="lightgray" 
-            opacity={0.7} 
-            transparent 
-            wireframe={true}
-          />
-        </Box>
-        
-        <Text 
-          position={[0, -1.5, 0]}
-          color="black" 
-          fontSize={0.2}
-          anchorX="center"
-          anchorY="middle"
-        >          Upload a container JSON file to get started        </Text>                {/* Also make this grid conditional */}        {showGrid && <gridHelper args={[10, 10]} />}
-      </Canvas>
-    </div>
-  );
+  // Return placeholder view when no container data
+  return <PlaceholderView showGrid={showGrid} />;
 };
 
 export default ThreeDView;
