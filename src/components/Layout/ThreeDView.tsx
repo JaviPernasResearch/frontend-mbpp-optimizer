@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { binDataState } from '@/states/binDataState';
 import { binCountState } from '@/states/binCountState'; 
 import { useOptimizationApi } from '@/hooks/useOptimizationApi';
+import { CameraProvider } from '@/context/CameraContext';
 import ThreeDViewport from '../ThreeD/viewport/ThreeDViewport';
 import CameraControls from '../ThreeD/controls/CameraControls';
 import BinSelector from '../ThreeD/controls/BinSelector';
@@ -56,51 +57,53 @@ const ThreeDView = () => {
   // If binData is loaded, render the container model
   if (binData) {
     return (
-      <div className="relative w-full h-full">
-        {/* Camera controls panel */}
-        <CameraControls containerRef={containerRef} />
-        
-        {/* View settings panel */}
-        <ViewControls 
-          colorBy={colorBy} 
-          showSlots={showSlots}
-          showGrid={showGrid}
-          showAxes={showAxes}
-          setColorBy={setColorBy}
-          setShowSlots={setShowSlots}
-          setShowGrid={setShowGrid}
-          setShowAxes={setShowAxes}
-        />
-        
-        {/* Debug information panel */}
-        <DebugPanel 
-          solution={solution}
-          packedParts={packedParts}
-          activeBinIndex={activeBinIndex}
-        />
-        
-        {/* Container selector */}
-        <BinSelector
-          binCount={binCount}
-          activeBinIndex={activeBinIndex}
-          setActiveBinIndex={setActiveBinIndex}
-          binsWithParts={binsWithParts}
-          packedParts={packedParts}
-        />
-        
-        {/* Main 3D viewport */}
-        <ThreeDViewport 
-          containerRef={containerRef}
-          containerSize={containerSize}
-          binCount={binCount}
-          packedParts={packedParts}
-          colorBy={colorBy}
-          showSlots={showSlots}
-          showGrid={showGrid}
-          showAxes={showAxes}
-          activeBinIndex={activeBinIndex}
-        />
-      </div>
+      <CameraProvider>
+        <div className="relative w-full h-full">
+          {/* Camera controls panel */}
+          <CameraControls containerRef={containerRef} />
+          
+          {/* View settings panel */}
+          <ViewControls 
+            colorBy={colorBy} 
+            showSlots={showSlots}
+            showGrid={showGrid}
+            showAxes={showAxes}
+            setColorBy={setColorBy}
+            setShowSlots={setShowSlots}
+            setShowGrid={setShowGrid}
+            setShowAxes={setShowAxes}
+          />
+          
+          {/* Debug information panel */}
+          <DebugPanel 
+            solution={solution}
+            packedParts={packedParts}
+            activeBinIndex={activeBinIndex}
+          />
+          
+          {/* Container selector */}
+          <BinSelector
+            binCount={binCount}
+            activeBinIndex={activeBinIndex}
+            setActiveBinIndex={setActiveBinIndex}
+            binsWithParts={binsWithParts}
+            packedParts={packedParts}
+          />
+          
+          {/* Main 3D viewport */}
+          <ThreeDViewport 
+            containerRef={containerRef}
+            containerSize={containerSize}
+            binCount={binCount}
+            packedParts={packedParts}
+            colorBy={colorBy}
+            showSlots={showSlots}
+            showGrid={showGrid}
+            showAxes={showAxes}
+            activeBinIndex={activeBinIndex}
+          />
+        </div>
+      </CameraProvider>
     );
   }
   

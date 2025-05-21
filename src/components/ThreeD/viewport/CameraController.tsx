@@ -2,6 +2,8 @@ import React, { useRef, useEffect } from 'react';
 import { useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { cameraManager } from '@/utils/cameraManager';
+import { useCamera } from '@/context/CameraContext';
+import { Object3D } from 'three';
 
 interface CameraControllerProps {
   containerSize: { X: number; Y: number; Z: number };
@@ -10,17 +12,42 @@ interface CameraControllerProps {
 const CameraController: React.FC<CameraControllerProps> = ({ containerSize }) => {
   const { camera, gl } = useThree();
   const controlsRef = useRef<any>(null);
+  const cameraContext = useCamera() as any; // Access the context with setCameraActions
   
   // Store the initial setup status
   const initializedRef = useRef(false);
   
   useEffect(() => {
-    if (controlsRef.current && !initializedRef.current) {
-      // Only initialize camera position once
+    // This registers the camera with the camera manager
+    if (camera) {
+      cameraManager.setCamera(camera);
+    }
+    
+    if (controlsRef.current) {
       cameraManager.registerControls(controlsRef.current);
+
+      // Make the camera actions available through context
+      cameraContext.setCameraActions({
+        applyPreset: (preset: 'isometric' | 'top' | 'side' | 'front') => {
+          const presets = cameraManager.getPresets();
+          if (presets[preset]) {
+            presets[preset]();
+          }
+        },
+        fitToObject: (object: Object3D) => {
+          cameraManager.fitCameraToObject(object);
+        }
+      });
+
       initializedRef.current = true;
     }
-  }, []);
+    
+    // Cleanup function
+    return () => {
+      cameraManager.setCamera(null);
+      cameraManager.registerControls(null);
+    };
+  }, [camera, cameraContext]);
   
   // Only update camera target when container size changes significantly
   useEffect(() => {

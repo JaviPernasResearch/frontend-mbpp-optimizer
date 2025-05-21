@@ -1,23 +1,24 @@
 import { useCallback } from 'react';
 import { Object3D } from 'three';
-import { cameraManager } from '@/utils/cameraManager';
+import { useCamera } from '@/context/CameraContext';
 
 interface CameraControlsProps {
   containerRef: React.RefObject<Object3D>;
 }
 
 const CameraControls: React.FC<CameraControlsProps> = ({ containerRef }) => {
+  const { applyPreset, fitToObject } = useCamera();
+  
   // Camera preset handlers
   const handleCameraPreset = useCallback((preset: 'isometric' | 'top' | 'side' | 'front') => {
-    const presets = cameraManager.getPresets();
-    presets[preset]();
-  }, []);
+    applyPreset(preset);
+  }, [applyPreset]);
   
   const handleFitToContainer = useCallback(() => {
     if (containerRef.current) {
-      cameraManager.fitCameraToObject(containerRef.current);
+      fitToObject(containerRef.current);
     }
-  }, [containerRef]);
+  }, [containerRef, fitToObject]);
 
   return (
     <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">

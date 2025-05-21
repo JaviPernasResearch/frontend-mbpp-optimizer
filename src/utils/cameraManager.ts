@@ -53,7 +53,7 @@ class CameraManager {
     };
   }
 
-  setCamera(camera: PerspectiveCamera | OrthographicCamera) {
+  setCamera(camera: PerspectiveCamera | OrthographicCamera | null) {
     this.camera = camera;
   }
 
