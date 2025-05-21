@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
-import { Bin, Part } from '@/types/BinTypes';
+import { Bin, Part } from '@/types/types';
 import { createContainerCopies } from '@/services/BinLoaderService';
 import { OptimizationObjective, OptimizationRequest, OptimizationSettings, OptimizationSolution } from '@/types/optimization';
 import { binCountState } from '@/states/binCountState';

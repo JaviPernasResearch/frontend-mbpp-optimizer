@@ -1,4 +1,4 @@
-import { Bin, Part, Slot, Module } from '../types/BinTypes';
+import { Bin, Part, Slot, Module } from '../types/types';
 
 /**
  * A specialized JSON parser that can handle both IMOS format and API format

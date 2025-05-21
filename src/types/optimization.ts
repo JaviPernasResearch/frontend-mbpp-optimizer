@@ -1,4 +1,4 @@
-import { Bin, PackedPart, Part } from "./BinTypes";
+import { Bin, PackedPart, Part } from "./types";
 
 export interface OptimizationSolution {
   status: string;

@@ -56,9 +56,10 @@ export interface Part {
 
 
 export interface PackedPart {
-  part_id: number;
-  bin_id: number;
-  slot_id: number;
+  part_guid: string
+  slot_gid: number
+  module_guid: string
+  bin_id: number
   alignment: number;
   assembly_id: number;
   material_type: string;

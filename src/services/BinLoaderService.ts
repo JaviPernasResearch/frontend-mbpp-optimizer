@@ -1,4 +1,4 @@
-import { Bin, Part } from '../types/BinTypes';
+import { Bin, Part } from '../types/types';
 import { JsonParserService } from './JsonParserService';
 
 /**

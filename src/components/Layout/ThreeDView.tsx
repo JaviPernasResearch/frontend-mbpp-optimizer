@@ -7,7 +7,7 @@ import { useAtom } from 'jotai';
 import { binDataState } from '@/states/binDataState';
 import { binCountState } from '@/states/binCountState'; 
 import { useOptimizationApi } from '@/hooks/useOptimizationApi';
-import BinRender from '../ThreeD/BinRender';
+import BinScene from '../ThreeD/BinScene';
 import CameraController from '../ThreeD/CameraController';
 import { toast } from 'react-toastify';
 import { cameraManager } from '@/utils/cameraManager';
@@ -204,7 +204,7 @@ const ThreeDView = () => {
           <CameraController containerSize={containerSize} />
           
           <group rotation={[0, 0, 0]} ref={containerRef}>
-            <BinRender
+            <BinScene
               binCount={binCount}
               packedParts={packedParts}
               colorBy={colorBy}
