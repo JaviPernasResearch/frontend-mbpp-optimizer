@@ -104,7 +104,6 @@ const SettingsMenu = () => {
           {isOptimizationEnabled && !isOptimizing && "Ready to optimize"}
           {isOptimizing && "Optimization in progress..."}
         </p>
-        
         {/* Display optimization results if available */}
         {solution && (
           <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
@@ -117,6 +116,6 @@ const SettingsMenu = () => {
       </div>
     </div>
   );
-};
-
+}
+;
 export default SettingsMenu;

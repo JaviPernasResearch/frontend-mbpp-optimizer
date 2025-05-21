@@ -264,12 +264,7 @@ const ThreeDView = () => {
           fontSize={0.2}
           anchorX="center"
           anchorY="middle"
-        >
-          Upload a container JSON file to get started
-        </Text>
-        
-        {/* Also make this grid conditional */}
-        {showGrid && <gridHelper args={[10, 10]} />}
+        >          Upload a container JSON file to get started        </Text>                {/* Also make this grid conditional */}        {showGrid && <gridHelper args={[10, 10]} />}
       </Canvas>
     </div>
   );
