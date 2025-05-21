@@ -85,11 +85,7 @@ const BinInstance: React.FC<BinInstanceProps> = ({
           
           console.log(`Rendering part ${packedPart.part_guid} in slot ${slot.global_index} of module ${module.guid}`);
           console.log(`Slot position:`, slot.origin);
-
-          const partWidth = originalPart.size.X;
-          const partHeight = originalPart.size.Y;
-          const partDepth = originalPart.size.Z;
-          
+         
           // After finding the module and slot:
           const { slotX, slotY, slotZ } = getSlotPositioning(slot, module.origin);
 

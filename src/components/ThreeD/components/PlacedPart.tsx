@@ -1,31 +1,14 @@
 import React from 'react';
 import { Box } from '@react-three/drei';
-
-// Color mapping for materials
-const PartColors: Record<string, string> = {
-  "P2_MFB_19": "#8B4513", // Brown
-  "P2_MFB_9": "#A0522D", // Sienna
-  "MPX_ROH_15": "#CD853F", // Peru
-  "MDF": "#D2B48C", // Tan
-  "UNDEFINED": "#D3D3D3" // Light Gray
-};
-
-// Material for different assembly IDs
-const AssemblyColors: Record<number, string> = {};
-const getAssemblyColor = (assemblyId: number): string => {
-  if (!AssemblyColors[assemblyId]) {
-    const hue = (assemblyId * 137.5) % 360;
-    AssemblyColors[assemblyId] = `hsl(${hue}, 70%, 60%)`;
-  }
-  return AssemblyColors[assemblyId];
-};
+import { getMaterialColor, getAssemblyColor } from '@/utils/colorUtils';
+import { MaterialType } from '@/types/types';
 
 interface PlacedPartProps {
   width: number;
   height: number;
   depth: number;
   position: [number, number, number];
-  materialType: string;
+  materialType: MaterialType;
   assemblyId: number;
   colorBy: 'material' | 'assembly';
   rotation?: [number, number, number];
@@ -43,8 +26,9 @@ const PlacedPart: React.FC<PlacedPartProps> = ({
   rotation = [0, 0, 0], 
   wireframe = false 
 }) => {
+  // Use shared color utilities
   const color = colorBy === 'material' 
-    ? PartColors[materialType] || PartColors.UNDEFINED
+    ? getMaterialColor(materialType)
     : getAssemblyColor(assemblyId);
   
   return (
@@ -59,4 +43,4 @@ const PlacedPart: React.FC<PlacedPartProps> = ({
   );
 };
 
-export { PlacedPart, PartColors, getAssemblyColor };
+export { PlacedPart };
