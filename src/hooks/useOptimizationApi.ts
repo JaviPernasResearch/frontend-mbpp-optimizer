@@ -143,7 +143,7 @@ export function useOptimizationApi() {
       if (settings.minimizeSpaceWaste) {
         objectives.push({ 
           objective_type: "WASTED_SPACE", 
-          weight: 5.0, 
+          weight: 1.0, 
           is_enabled: true
         });
       }
@@ -151,7 +151,7 @@ export function useOptimizationApi() {
       if (settings.groupSameOrderComponents) {
         objectives.push({ 
           objective_type: "ASSEMBLY_BLOCK_WIDTH", 
-          weight: 3.0, 
+          weight: 1.0, 
           is_enabled: true
         });
       }
@@ -159,7 +159,7 @@ export function useOptimizationApi() {
       if (settings.groupSameMaterialComponents) {
         objectives.push({ 
           objective_type: "MATERIAL_BLOCK_WIDTH", 
-          weight: 2.0, 
+          weight: 1.0, 
           is_enabled: true
         });
       }

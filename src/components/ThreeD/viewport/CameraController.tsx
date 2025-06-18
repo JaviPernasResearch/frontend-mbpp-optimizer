@@ -44,7 +44,6 @@ const CameraController: React.FC<CameraControllerProps> = ({ containerSize }) =>
     
     // Cleanup function
     return () => {
-      cameraManager.setCamera(null);
       cameraManager.registerControls(null);
     };
   }, [camera, cameraContext]);
